@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  collect-be:
+    container_name: collect-be
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    security_opt:
+      - no-new-privileges
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      APP_NAME: ${APP_NAME}
+      APP_VERSION: ${APP_VERSION}
+      APP_DESCRIPTION: ${APP_DESCRIPTION}
+      MONGO_URL: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@collect-mongodb-primary:27017,collect-mongodb-secondary:27017,collect-mongodb-arbiter:27017/${MONGODB_DATABASE}?replicaSet=${MONGODB_REPLICA_SET_NAME}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
+      JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      - ${PWD}:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - gateway
+
+
+
+networks:
+  gateway:
+    external: true
+    name: gateway

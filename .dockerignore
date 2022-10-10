@@ -1,0 +1,10 @@
+.bash_history
+.code-workspace
+Dockerfile
+README.md
+.env
+docker-compose
+node_modules/
+.git/
+**/tmp/*
+**/vscode/*
