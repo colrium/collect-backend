@@ -14,9 +14,17 @@ insert_final_newline = true
 [*.md]
 trim_trailing_whitespace = false
 
-[*.ts]
+[*.{ts,json,js}]
 indent_style = tab
 indent_size = 4
+
+[{prettier.js,.prettierrc}]
+indent_style = tab
+indent_size = 4
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
 
 # Use 2 spaces since npm does not respect custom indentation settings
 [package.json]

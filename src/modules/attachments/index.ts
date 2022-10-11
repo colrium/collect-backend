@@ -1,6 +1,0 @@
-export { default as AttachmentController } from "./attachment.controller"
-export { default as Attachment } from "./attachment.entity"
-export { default as AttachmentModule } from "./attachment.module"
-export { default as AttachmentService } from "./attachment.service"
-export { default as AttachmentSubscriber } from "./attachment.subscriber"
-export * from "./dto"

@@ -1,36 +1,85 @@
-version: '3.7'
-
 services:
-  collect-be:
-    container_name: collect-be
-    restart: unless-stopped
+  collect-be-static:
+    container_name: collect-be-static
     build:
       context: .
-      dockerfile: Dockerfile
-    security_opt:
-      - no-new-privileges
-    environment:
-      NODE_ENV: ${NODE_ENV}
-      PORT: ${PORT}
-      APP_NAME: ${APP_NAME}
-      APP_VERSION: ${APP_VERSION}
-      APP_DESCRIPTION: ${APP_DESCRIPTION}
-      MONGO_URL: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@collect-mongodb-primary:27017,collect-mongodb-secondary:27017,collect-mongodb-arbiter:27017/${MONGODB_DATABASE}?replicaSet=${MONGODB_REPLICA_SET_NAME}
-      ADMIN_USERNAME: ${ADMIN_USERNAME}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
-      JWT_SECRET: ${JWT_SECRET}
+      dockerfile: ./apps/static/Dockerfile
+      target: development
+    command: npm run start:dev static
+    env_file:
+      - ./apps/static/.env
+    depends_on:
+      - collect-be-mongodb-primary
+      - collect-be-mongodb-secondary
+      - collect-be-mongodb-arbiter
+      - collect-be-auth
+      - collect-be-rabbitmq
     volumes:
-      - ${PWD}:/usr/src/app
+      - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - ${PORT}:${PORT}
-    networks:
-      - gateway
+      - '8080:8080'
+  collect-be-auth:
+    container_name: collect-be-auth
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    ports:
+      - '8081:8081'
+    env_file:
+      - ./apps/auth/.env
+    depends_on:
+      - collect-be-mongodb-primary
+      - collect-be-mongodb-secondary
+      - collect-be-mongodb-arbiter
+      - collect-be-rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+  collect-be-rabbitmq:
+    image: rabbitmq
+    container_name: collect-be-rabbitmq
+    ports:
+      - '5672:5672'
+  collect-be-mongodb-primary:
+    image: docker.io/bitnami/mongodb:5.0
+    container_name: collect-be-mongodb-primary
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=collect-be-mongodb-primary
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    volumes:
+      - 'collect_be_mongodb_master_data:/bitnami/mongodb'
+    ports:
+      - '27017:27017'
 
+  collect-be-mongodb-secondary:
+    image: docker.io/bitnami/mongodb:5.0
+    container_name: collect-be-mongodb-secondary
+    depends_on:
+      - collect-be-mongodb-primary
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=collect-be-mongodb-secondary
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_INITIAL_PRIMARY_HOST=collect-be-mongodb-primary
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
+  collect-be-mongodb-arbiter:
+    image: docker.io/bitnami/mongodb:5.0
+    container_name: collect-be-mongodb-arbiter
+    depends_on:
+      - collect-be-mongodb-primary
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=collect-be-mongodb-arbiter
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_INITIAL_PRIMARY_HOST=collect-be-mongodb-primary
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
-networks:
-  gateway:
-    external: true
-    name: gateway
+volumes:
+  collect_be_mongodb_master_data:
+    driver: local
