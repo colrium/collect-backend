@@ -1,6 +1,8 @@
+version: '3.7'
+
 services:
-  collect-be-static:
-    container_name: collect-be-static
+  cbe-static:
+    container_name: cbe-static
     build:
       context: .
       dockerfile: ./apps/static/Dockerfile
@@ -9,18 +11,18 @@ services:
     env_file:
       - ./apps/static/.env
     depends_on:
-      - collect-be-mongodb-primary
-      - collect-be-mongodb-secondary
-      - collect-be-mongodb-arbiter
-      - collect-be-auth
-      - collect-be-rabbitmq
+      - cbe-mongodb-primary
+      - cbe-mongodb-secondary
+      - cbe-mongodb-arbiter
+      - cbe-auth
+      - cbe-rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - '8080:8080'
-  collect-be-auth:
-    container_name: collect-be-auth
+  cbe-auth:
+    container_name: cbe-auth
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
@@ -31,55 +33,54 @@ services:
     env_file:
       - ./apps/auth/.env
     depends_on:
-      - collect-be-mongodb-primary
-      - collect-be-mongodb-secondary
-      - collect-be-mongodb-arbiter
-      - collect-be-rabbitmq
+      - cbe-mongodb-primary
+      - cbe-mongodb-secondary
+      - cbe-mongodb-arbiter
+      - cbe-rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-  collect-be-rabbitmq:
+  cbe-rabbitmq:
     image: rabbitmq
-    container_name: collect-be-rabbitmq
+    container_name: cbe-rabbitmq
     ports:
       - '5672:5672'
-  collect-be-mongodb-primary:
-    image: docker.io/bitnami/mongodb:5.0
-    container_name: collect-be-mongodb-primary
+  cbe-mongodb-primary:
+    image: bitnami/mongodb:latest
+    container_name: cbe-mongodb-primary
     environment:
-      - MONGODB_ADVERTISED_HOSTNAME=collect-be-mongodb-primary
+      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-primary
       - MONGODB_REPLICA_SET_MODE=primary
       - MONGODB_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
     volumes:
-      - 'collect_be_mongodb_master_data:/bitnami/mongodb'
+      - 'cbe_mongodb_master_data:/bitnami/mongodb'
     ports:
       - '27017:27017'
 
-  collect-be-mongodb-secondary:
-    image: docker.io/bitnami/mongodb:5.0
-    container_name: collect-be-mongodb-secondary
+  cbe-mongodb-secondary:
+    image: bitnami/mongodb:latest
+    container_name: cbe-mongodb-secondary
     depends_on:
-      - collect-be-mongodb-primary
+      - cbe-mongodb-primary
     environment:
-      - MONGODB_ADVERTISED_HOSTNAME=collect-be-mongodb-secondary
+      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-secondary
       - MONGODB_REPLICA_SET_MODE=secondary
-      - MONGODB_INITIAL_PRIMARY_HOST=collect-be-mongodb-primary
+      - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
-  collect-be-mongodb-arbiter:
-    image: docker.io/bitnami/mongodb:5.0
-    container_name: collect-be-mongodb-arbiter
+  cbe-mongodb-arbiter:
+    image: bitnami/mongodb:latest
+    container_name: cbe-mongodb-arbiter
     depends_on:
-      - collect-be-mongodb-primary
+      - cbe-mongodb-primary
     environment:
-      - MONGODB_ADVERTISED_HOSTNAME=collect-be-mongodb-arbiter
+      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-arbiter
       - MONGODB_REPLICA_SET_MODE=arbiter
-      - MONGODB_INITIAL_PRIMARY_HOST=collect-be-mongodb-primary
+      - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
 volumes:
-  collect_be_mongodb_master_data:
-    driver: local
+  cbe_mongodb_master_data:
