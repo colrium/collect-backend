@@ -8,6 +8,9 @@ services:
       dockerfile: ./apps/static/Dockerfile
       target: development
     command: npm run start:dev static
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
     env_file:
       - ./apps/static/.env
     depends_on:
@@ -28,6 +31,9 @@ services:
       dockerfile: ./apps/auth/Dockerfile
       target: development
     command: npm run start:dev auth
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
     ports:
       - '8081:8081'
     env_file:
@@ -43,11 +49,15 @@ services:
   cbe-rabbitmq:
     image: rabbitmq
     container_name: cbe-rabbitmq
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
     ports:
       - '5672:5672'
   cbe-mongodb-primary:
     image: bitnami/mongodb:latest
     container_name: cbe-mongodb-primary
+    restart: unless-stopped
     environment:
       - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-primary
       - MONGODB_REPLICA_SET_MODE=primary
@@ -61,6 +71,7 @@ services:
   cbe-mongodb-secondary:
     image: bitnami/mongodb:latest
     container_name: cbe-mongodb-secondary
+    restart: unless-stopped
     depends_on:
       - cbe-mongodb-primary
     environment:
@@ -73,6 +84,7 @@ services:
   cbe-mongodb-arbiter:
     image: bitnami/mongodb:latest
     container_name: cbe-mongodb-arbiter
+    restart: unless-stopped
     depends_on:
       - cbe-mongodb-primary
     environment:
@@ -81,6 +93,16 @@ services:
       - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
+  cbe-mongodb-client:
+    image: mongoclient/mongoclient
+    container_name: cbe-mongodb-client
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    ports:
+      - 8091:3000
+    depends_on:
+      - cbe-mongodb-primary
 
 volumes:
   cbe_mongodb_master_data:

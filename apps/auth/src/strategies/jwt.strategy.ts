@@ -11,8 +11,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor(configService: ConfigService, private readonly usersService: UsersService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromExtractors([
+				ExtractJwt.fromAuthHeaderAsBearerToken(),
 				(request: any) => {
-					return request?.Authentication
+					return request?.Authorization || request?.Authentication
 				},
 			]),
 			secretOrKey: configService.get("JWT_SECRET"),
@@ -21,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	async validate({ sub }: TokenPayload) {
 		try {
-			return await this.usersService.getUser({
+			return await this.usersService.findOne({
 				_id: new Types.ObjectId(sub),
 			})
 		} catch (err) {

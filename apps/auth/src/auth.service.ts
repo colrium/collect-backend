@@ -9,30 +9,33 @@ export interface TokenPayload {
 	sub: string
 	name: string
 	admin: boolean
-	iat: number
+	iat?: number
+	exp?: number
 }
 
 @Injectable()
 export class AuthService {
-	constructor(private readonly configService: ConfigService, private readonly jwtService: JwtService) {}
+	constructor(
+		private readonly configService: ConfigService,
+		private readonly jwtService: JwtService
+	) {}
 
 	async login(user: User, response: Response) {
+		const expires = new Date()
+		expires.setSeconds(
+			expires.getSeconds() + this.configService.get("JWT_EXPIRATION")
+		)
+
 		const tokenPayload: TokenPayload = {
 			sub: user._id.toHexString(),
 			name: user.fullName,
 			admin: Array.isArray(user.roles) && user.roles.includes(Role.ADMIN),
 			iat: Date.now(),
+			exp: expires.getTime(),
 		}
 
-		const expires = new Date()
-		expires.setSeconds(expires.getSeconds() + this.configService.get("JWT_EXPIRATION"))
-
 		const token = this.jwtService.sign(tokenPayload)
-
-		response.cookie("Authentication", token, {
-			httpOnly: true,
-			expires,
-		})
+		response.header("Authorization", `Bearer ${token}`)
 	}
 
 	logout(response: Response) {

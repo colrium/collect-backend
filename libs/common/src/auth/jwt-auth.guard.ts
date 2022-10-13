@@ -7,11 +7,13 @@ import { AUTH_SERVICE } from "./services"
 export class JwtAuthGuard implements CanActivate {
 	constructor(@Inject(AUTH_SERVICE) private authClient: ClientProxy) {}
 
-	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-		const authentication = this.getAuthentication(context)
+	canActivate(
+		context: ExecutionContext
+	): boolean | Promise<boolean> | Observable<boolean> {
+		const authorization = this.getContextAuthorization(context)
 		return this.authClient
 			.send("validate_user", {
-				Authentication: authentication,
+				Authorization: authorization,
 			})
 			.pipe(
 				tap((res) => {
@@ -23,17 +25,20 @@ export class JwtAuthGuard implements CanActivate {
 			)
 	}
 
-	private getAuthentication(context: ExecutionContext) {
-		let authentication: string
+	private getContextAuthorization(context: ExecutionContext) {
+		let authorization: string
 		if (context.getType() === "rpc") {
-			authentication = context.switchToRpc().getData().Authentication
+			authorization = context.switchToRpc().getData().Authorization
 		} else if (context.getType() === "http") {
-			authentication = context.switchToHttp().getRequest().cookies?.Authentication
+			authorization = context.switchToHttp().getRequest()
+				.cookies?.Authorization
 		}
-		if (!authentication) {
-			throw new UnauthorizedException("No value was provided for Authentication")
+		if (!authorization) {
+			throw new UnauthorizedException(
+				"No value was provided for Authorization"
+			)
 		}
-		return authentication
+		return authorization
 	}
 
 	private addUser(user: any, context: ExecutionContext) {

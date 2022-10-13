@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException, UnprocessableEntityException } from "@nestjs/common"
+import { FilterQuery } from "mongoose"
 import { UsersRepository } from "./users.repository"
 import { CreateUserRequest } from "./dto/create-user.request"
 import { User } from "./schemas/user.schema"
@@ -8,17 +9,17 @@ import { Password } from "@app/common"
 export class UsersService {
 	constructor(private readonly usersRepository: UsersRepository) {}
 
-	async createUser(request: CreateUserRequest) {
-		await this.validateCreateUserRequest(request)
-		const user = await this.usersRepository.create(request)
+	async create(data: Omit<User, "_id">) {
+		await this.validateCreate(data)
+		const user = await this.usersRepository.create(data)
 		return user
 	}
 
-	private async validateCreateUserRequest(request: CreateUserRequest) {
+	private async validateCreate(data: Omit<User, "_id">) {
 		let user: User
 		try {
 			user = await this.usersRepository.findOne({
-				email: request.email,
+				email: data.email,
 			})
 		} catch (err) {
 			throw err
@@ -37,7 +38,11 @@ export class UsersService {
 		return user
 	}
 
-	async getUser(getUserArgs: Partial<User>) {
-		return this.usersRepository.findOne(getUserArgs)
+	async findOne(filterQuery: FilterQuery<User>) {
+		return await this.usersRepository.findOne(filterQuery)
+	}
+
+	async find(filterQuery: FilterQuery<User>) {
+		return await this.usersRepository.findOne(filterQuery)
 	}
 }
