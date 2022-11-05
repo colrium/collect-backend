@@ -7,10 +7,6 @@ import { toJSON as toJSONPlugin } from "./mongo.tojson.plugin"
 	imports: [
 		MongooseModule.forRootAsync({
 			useFactory: (configService: ConfigService) => {
-				console.log(
-					"Connecting to database...",
-					configService.get("MONGODB_URI")
-				)
 				return {
 					uri: configService.get<string>("MONGODB_URI"),
 					connectionFactory: (connection) => {

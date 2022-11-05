@@ -231,9 +231,6 @@ export class LinkHeaderInterceptor<T> implements NestInterceptor<T, T[]> {
 			endIndex = linkOptions.totalDocs + 1
 		}
 
-		const contentRangeHeader =
-
-		console.log("")
 
 		return contentRange.format({
 			start: startIndex,

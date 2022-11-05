@@ -48,7 +48,6 @@ export class UsersController {
 	@UseInterceptors(new LinkHeaderInterceptor({ resource: "users" }))
 	@Get()
 	async findAll(@Pagination() pagination: IPagination) {
-		console.log("users pagination", pagination)
 		return await this.usersService.findAll({})
 	}
 

@@ -26,7 +26,6 @@ export abstract class MongoRepository<TDocument extends MongoDocument> {
 	async findAll(
 		filterQuery: FilterQuery<TDocument>
 	): Promise<{ count: number; data: TDocument[] }> {
-		console.log("filterQuery", filterQuery)
 		const data: TDocument[] = await this.model.find(filterQuery, {})
 		const count: number = await this.model.count(filterQuery)
 
