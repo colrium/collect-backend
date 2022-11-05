@@ -4,6 +4,7 @@ import { RmqOptions } from "@nestjs/microservices"
 import { ValidationPipe, Logger } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 import * as cookieParser from "cookie-parser"
+import { name, version } from "../../../package.json"
 import {
 	DocumentBuilder,
 	SwaggerCustomOptions,
@@ -19,20 +20,18 @@ async function bootstrap() {
 	const configService = app.get(ConfigService)
 	const rmqService = app.get<RmqService>(RmqService)
 
-	const APP_NAME = configService.get<string>("APP_NAME")
-	const APP_DESCRIPTION = configService.get<string>("APP_DESCRIPTION")
+	const APP_NAME = `${name} Auth`
+	const APP_DESCRIPTION = "Authentication & Authorization"
 	const APP_VERSION = configService.get<string>("APP_VERSION")
 	const PORT = configService.get<number>("PORT") || 3001
-	logger.verbose(
-		`Application MONGODB_URI: ${configService.get<string>("MONGODB_URI")}`
-	)
+	logger.verbose(`${APP_NAME} Application`)
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
 	app.use(cookieParser())
 	app.connectMicroservice<RmqOptions>(rmqService.getOptions("AUTH", true))
 	const swaggerConfigBuilder = new DocumentBuilder()
 		.setTitle(APP_NAME)
 		.setDescription(APP_DESCRIPTION)
-		.setVersion(APP_VERSION)
+		.setVersion(version)
 		.addBearerAuth()
 	// .addCookieAuth("Authentication")
 	const swaggerConfig = swaggerConfigBuilder.build()
@@ -44,6 +43,6 @@ async function bootstrap() {
 
 	await app.startAllMicroservices()
 	await app.listen(PORT)
-	logger.verbose(`Application listening in port: ${PORT}`)
+	logger.verbose(`${APP_NAME} Application listening in port: ${PORT}`)
 }
 bootstrap()

@@ -10,7 +10,7 @@ export class UsersService {
 	constructor(private readonly usersRepository: UsersRepository) {}
 
 	async create(data: Omit<User, "_id">) {
-		await this.validateCreate(data)
+		// await this.validateCreate(data)
 		const user = await this.usersRepository.create(data)
 		return user
 	}
@@ -22,7 +22,7 @@ export class UsersService {
 				email: data.email,
 			})
 		} catch (err) {
-			throw err
+			//throw err
 		}
 		if (user) {
 			throw new UnprocessableEntityException("Email already exists.")
@@ -42,7 +42,7 @@ export class UsersService {
 		return await this.usersRepository.findOne(filterQuery)
 	}
 
-	async find(filterQuery: FilterQuery<User>) {
-		return await this.usersRepository.findOne(filterQuery)
+	async findAll(filterQuery: FilterQuery<User>) {
+		return await this.usersRepository.findAll(filterQuery)
 	}
 }

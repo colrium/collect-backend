@@ -63,7 +63,7 @@ export class UserCommand {
 			default: null,
 			required: false,
 		})
-		staffId: string
+		staffId: string,
 
 		@Option({
 			name: "status",
@@ -72,7 +72,7 @@ export class UserCommand {
 			default: "active",
 			required: false,
 		})
-		status: string
+		status: string,
 
 		@Option({
 			name: "country",
@@ -81,7 +81,7 @@ export class UserCommand {
 			default: "KE",
 			required: false,
 		})
-		country: string
+		country: string,
 
 		@Option({
 			name: "city",
@@ -90,7 +90,7 @@ export class UserCommand {
 			default: "Nairobi",
 			required: false,
 		})
-		city: string
+		city: string,
 
 		@Option({
 			name: "admin-level-1",
@@ -99,7 +99,7 @@ export class UserCommand {
 			default: "Nairobi City",
 			required: false,
 		})
-		adminLevel1: string
+		adminLevel1: string,
 
 
 		@Option({
@@ -109,7 +109,7 @@ export class UserCommand {
 			default: "Starehe",
 			required: false,
 		})
-		adminLevel2: string
+		adminLevel2: string,
 
 		@Option({
 			name: "admin-level-3",
@@ -118,7 +118,7 @@ export class UserCommand {
 			default: "Starehe",
 			required: false,
 		})
-		adminLevel3: string
+		adminLevel3: string,
 
 		@Option({
 			name: "admin-level-4",
@@ -127,7 +127,7 @@ export class UserCommand {
 			default: "CBD",
 			required: false,
 		})
-		adminLevel4: string
+		adminLevel4: string,
 
 
 	) {

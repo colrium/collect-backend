@@ -1,4 +1,12 @@
-import { UseGuards, Param, Body, Controller, Get, Post } from "@nestjs/common"
+import {
+	UseGuards,
+	Param,
+	Body,
+	Controller,
+	Get,
+	Post,
+	UseInterceptors,
+} from "@nestjs/common"
 import {
 	ApiTags,
 	ApiBearerAuth,
@@ -7,9 +15,17 @@ import {
 	ApiSecurity,
 	ApiOkResponse,
 	ApiParam,
+	ApiQuery,
 } from "@nestjs/swagger"
 import { ObjectId } from "bson"
-import { ParseObjectIdPipe } from "@app/common"
+import {
+	ApiPagination,
+	ApiPaginationResponse,
+	IPagination,
+	LinkHeaderInterceptor,
+	Pagination,
+	ParseObjectIdPipe,
+} from "@app/common"
 import { JwtAuthGuard } from "../guards/jwt-auth.guard"
 import { CreateUserRequest } from "./dto/create-user.request"
 import { UsersService } from "./users.service"
@@ -17,19 +33,23 @@ import { User } from "./schemas/user.schema"
 
 @ApiTags("Users")
 @Controller("users")
-@ApiSecurity("bearer")
-@UseGuards(JwtAuthGuard)
+// @ApiSecurity("bearer")
+// @UseGuards(JwtAuthGuard)
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
-	@ApiOperation({ summary: "Get users" })
-	@ApiResponse({
+
+	@ApiPagination({ model: User })
+	@ApiPaginationResponse({
+		model: User,
 		status: 200,
-		description: "The found records",
-		type: [User],
+		description: "The list of users",
+		resource: "users",
 	})
+	@UseInterceptors(new LinkHeaderInterceptor({ resource: "users" }))
 	@Get()
-	async find() {
-		return await this.usersService.find({})
+	async findAll(@Pagination() pagination: IPagination) {
+		console.log("users pagination", pagination)
+		return await this.usersService.findAll({})
 	}
 
 	@ApiOkResponse({
@@ -37,6 +57,11 @@ export class UsersController {
 		type: User,
 	})
 	@ApiParam({
+		name: "id",
+		type: "string",
+		description: "Id of the user",
+	})
+	@ApiQuery({
 		name: "id",
 		type: "string",
 		description: "Id of the user",

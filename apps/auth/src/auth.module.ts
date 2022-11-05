@@ -17,17 +17,20 @@ import { UsersModule } from "./users/users.module"
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
+				NODE_ENV: Joi.string().required(),
+				PORT: Joi.number().required(),
 				JWT_SECRET: Joi.string().required(),
 				JWT_EXPIRATION: Joi.string().required(),
 				MONGODB_URI: Joi.string().required(),
+				RABBIT_MQ_URI: Joi.string().required(),
+				RABBIT_MQ_AUTH_QUEUE: Joi.string().required(),
 			}),
-			envFilePath: "./apps/auth/.env",
 		}),
 		JwtModule.registerAsync({
 			useFactory: (configService: ConfigService) => ({
 				secret: configService.get<string>("JWT_SECRET"),
 				signOptions: {
-					expiresIn: `${configService.get("JWT_EXPIRATION")}s`,
+					expiresIn: configService.get<string>("JWT_EXPIRATION"),
 				},
 			}),
 			inject: [ConfigService],

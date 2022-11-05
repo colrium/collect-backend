@@ -43,6 +43,15 @@ export class AuthController {
 	@ApiOkResponse({
 		status: 201,
 		description: "The loggedin user",
+		headers: {
+			Authorization: {
+				description: "The authorization scope and jwt token",
+				schema: {
+					type: "string",
+					example: "Bearer <token>",
+				},
+			},
+		},
 		type: User,
 	})
 	@ApiOperation({

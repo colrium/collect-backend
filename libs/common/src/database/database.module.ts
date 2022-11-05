@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 import { MongooseModule } from "@nestjs/mongoose"
-import { toJSON as toJSONPlugin } from "./tojson.plugin"
+import { toJSON as toJSONPlugin } from "./mongo.tojson.plugin"
 
 @Module({
 	imports: [

@@ -11,8 +11,8 @@ services:
     restart: unless-stopped
     security_opt:
       - no-new-privileges
-    env_file:
-      - ./apps/static/.env
+    environment:
+      PORT: ${APPS_PORT}
     depends_on:
       - cbe-mongodb-primary
       - cbe-mongodb-secondary
@@ -23,7 +23,8 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - '8080:8080'
+      - '8081:${APPS_PORT}'
+
   cbe-auth:
     container_name: cbe-auth
     build:
@@ -32,20 +33,26 @@ services:
       target: development
     command: npm run start:dev auth
     restart: unless-stopped
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     security_opt:
       - no-new-privileges
     ports:
-      - '8081:8081'
-    env_file:
-      - ./apps/auth/.env
+      - '8082:${APPS_PORT}'
+    environment:
+      PORT: ${APPS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      MONGODB_URI: mongodb://collect:password123@cbe-mongodb-primary:27017/collect
+      RABBIT_MQ_URI: amqp://cbe-rabbitmq:5672
+      RABBIT_MQ_AUTH_QUEUE: auth
     depends_on:
       - cbe-mongodb-primary
       - cbe-mongodb-secondary
       - cbe-mongodb-arbiter
       - cbe-rabbitmq
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+
   cbe-rabbitmq:
     image: rabbitmq
     container_name: cbe-rabbitmq
@@ -53,20 +60,24 @@ services:
     security_opt:
       - no-new-privileges
     ports:
-      - '5672:5672'
+      - '8071:5672'
+
   cbe-mongodb-primary:
     image: bitnami/mongodb:latest
     container_name: cbe-mongodb-primary
     restart: unless-stopped
     environment:
-      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-primary
-      - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_ROOT_PASSWORD=password123
-      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb-primary
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_ROOT_PASSWORD: password123
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+      MONGODB_USERNAME: collect
+      MONGODB_PASSWORD: password123
+      MONGODB_DATABASE: collect
     volumes:
       - 'cbe_mongodb_master_data:/bitnami/mongodb'
     ports:
-      - '27017:27017'
+      - '8061:27017'
 
   cbe-mongodb-secondary:
     image: bitnami/mongodb:latest
@@ -75,11 +86,15 @@ services:
     depends_on:
       - cbe-mongodb-primary
     environment:
-      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-secondary
-      - MONGODB_REPLICA_SET_MODE=secondary
-      - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
-      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
-      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb-secondary
+      MONGODB_REPLICA_SET_MODE: secondary
+      MONGODB_INITIAL_PRIMARY_HOST: cbe-mongodb-primary
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: password123
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MONGODB_USERNAME: collect
+      MONGODB_PASSWORD: password123
+      MONGODB_DATABASE: collect
 
   cbe-mongodb-arbiter:
     image: bitnami/mongodb:latest
@@ -88,11 +103,16 @@ services:
     depends_on:
       - cbe-mongodb-primary
     environment:
-      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-arbiter
-      - MONGODB_REPLICA_SET_MODE=arbiter
-      - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
-      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
-      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+      MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb-arbiter
+      MONGODB_REPLICA_SET_MODE: arbiter
+      MONGODB_INITIAL_PRIMARY_HOST: cbe-mongodb-primary
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: password123
+      MONGODB_REPLICA_SET_KEY: replicasetkey123
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MONGODB_USERNAME: collect
+      MONGODB_PASSWORD: password123
+      MONGODB_DATABASE: collect
+
   cbe-mongodb-client:
     image: mongoclient/mongoclient
     container_name: cbe-mongodb-client
@@ -106,3 +126,4 @@ services:
 
 volumes:
   cbe_mongodb_master_data:
+    driver: local

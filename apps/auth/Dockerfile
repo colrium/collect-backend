@@ -1,14 +1,17 @@
 FROM node:alpine As development
 
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+
 WORKDIR /usr/src/app
 
-COPY package*.json yarn.lock* ./
+COPY package.json yarn.lock* ./
 
 RUN yarn install
 
 COPY . .
 
-RUN npm run build auth
+RUN yarn build auth
 
 FROM node:alpine as production
 

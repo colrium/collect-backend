@@ -6,9 +6,9 @@ interface PaginationMeta {
 	currentPage: number
 }
 
-class PaginatedDto<TData> {
+class PaginationDto<TData> {
 	items: TData[]
 	meta: PaginationMeta
 }
 
-export { PaginationMeta, PaginatedDto }
+export { PaginationMeta, PaginationDto }
