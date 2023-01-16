@@ -1,2 +1,2 @@
 export * from "./is-objectid"
-export * from "./is-paginated-response"
+export * from "./paginated-response"

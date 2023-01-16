@@ -46,6 +46,10 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+    networks:
+      - cbe-msg-broker
+      - cbe-db
+
   cbe-rabbitmq:
     image: rabbitmq
     container_name: cbe-rabbitmq
@@ -54,6 +58,9 @@ services:
       - no-new-privileges
     ports:
       - '5672:5672'
+    networks:
+      - cbe-msg-broker
+
   cbe-mongodb-primary:
     image: bitnami/mongodb:latest
     container_name: cbe-mongodb-primary
@@ -67,6 +74,8 @@ services:
       - 'cbe_mongodb_master_data:/bitnami/mongodb'
     ports:
       - '27017:27017'
+    networks:
+      - cbe-db
 
   cbe-mongodb-secondary:
     image: bitnami/mongodb:latest
@@ -93,6 +102,9 @@ services:
       - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    networks:
+      - cbe-db
+
   cbe-mongodb-client:
     image: mongoclient/mongoclient
     container_name: cbe-mongodb-client
@@ -103,6 +115,32 @@ services:
       - 8091:3000
     depends_on:
       - cbe-mongodb-primary
+    networks:
+      - cbe-db
+
+  cbe-zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    container_name: cbe-zookeeper
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    networks:
+      - cbe-msg-broker
+
+  cbe-msg-broker:
+    image: 'bitnami/kafka:latest'
+    container_name: cbe-msg-broker
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    networks:
+      - cbe-msg-broker
 
 volumes:
   cbe_mongodb_master_data:
+
+networks:
+  cbe-msg-broker:
+    driver: bridge
+  cbe-db:
+    driver: bridge

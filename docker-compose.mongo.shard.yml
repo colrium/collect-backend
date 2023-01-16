@@ -1,0 +1,61 @@
+version: '3.7'
+services:
+  cbe-mongodb-primary:
+    image: bitnami/mongodb:latest
+    container_name: cbe-mongodb-primary
+    extends:
+      file: docker-compose.mongo.yml
+      service: cbe-mongodb
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb-primary
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_KEY: ${MONGODB_REPLICA_SET_KEY}
+    volumes:
+      - 'cbe_mongodb_master_data:/bitnami/mongodb'
+    ports:
+      - '8062:27017'
+
+  cbe-mongodb-secondary:
+    image: bitnami/mongodb:latest
+    container_name: cbe-mongodb-secondary
+    restart: unless-stopped
+    depends_on:
+      - cbe-mongodb-primary
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb-secondary
+      MONGODB_REPLICA_SET_MODE: secondary
+      MONGODB_INITIAL_PRIMARY_HOST: cbe-mongodb-primary
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
+      MONGODB_REPLICA_SET_KEY: ${MONGODB_REPLICA_SET_KEY}
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+
+
+  cbe-mongodb-arbiter:
+    image: bitnami/mongodb:latest
+    container_name: cbe-mongodb-arbiter
+    restart: unless-stopped
+    depends_on:
+      - cbe-mongodb-primary
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb-arbiter
+      MONGODB_REPLICA_SET_MODE: arbiter
+      MONGODB_INITIAL_PRIMARY_HOST: cbe-mongodb-primary
+      MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
+      MONGODB_REPLICA_SET_KEY: ${MONGODB_REPLICA_SET_KEY}
+      ALLOW_EMPTY_PASSWORD: "yes"
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+
+
+volumes:
+  cbe_mongodb_master_data:
+    driver: local
+
+networks:
+  default:
+    external:
+      name: cbe-mongo-net

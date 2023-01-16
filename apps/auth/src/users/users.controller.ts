@@ -1,4 +1,12 @@
-import { UseGuards, Param, Body, Controller, Get, Post } from "@nestjs/common"
+import {
+	UseGuards,
+	Query,
+	Param,
+	Body,
+	Controller,
+	Get,
+	Post,
+} from "@nestjs/common"
 import {
 	ApiTags,
 	ApiBearerAuth,
@@ -9,7 +17,7 @@ import {
 	ApiParam,
 } from "@nestjs/swagger"
 import { ObjectId } from "bson"
-import { ParseObjectIdPipe } from "@app/common"
+import { ParseObjectIdPipe, PaginatedResponse } from "@app/common"
 import { JwtAuthGuard } from "../guards/jwt-auth.guard"
 import { CreateUserRequest } from "./dto/create-user.request"
 import { UsersService } from "./users.service"
@@ -22,11 +30,19 @@ import { User } from "./schemas/user.schema"
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 	@ApiOperation({ summary: "Get users" })
-	@ApiResponse({
-		status: 200,
-		description: "The found records",
-		type: [User],
-	})
+	// @ApiResponse({
+	// 	status: 200,
+	// 	description: "The found records",
+	// 	headers: {
+	// 		"X-Total-Count": {
+	// 			description: "Total number of records",
+	// 			example: 123,
+	// 			type: "number",
+	// 		},
+	// 	},
+	// 	type: [User],
+	// })
+	@PaginatedResponse(User)
 	@Get()
 	async find() {
 		return await this.usersService.find({})

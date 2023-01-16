@@ -3,6 +3,7 @@ import { MessagePattern } from "@nestjs/microservices"
 import {
 	ApiTags,
 	ApiProperty,
+	ApiHeader,
 	ApiBearerAuth,
 	ApiResponse,
 	ApiOperation,
@@ -40,10 +41,21 @@ export class AuthController {
 		private readonly usersService: UsersService
 	) {}
 
-	@ApiOkResponse({
+	@ApiResponse({
 		status: 201,
-		description: "The loggedin user",
+		description: "Login successful",
 		type: User,
+		headers: {
+			Authorization: {
+				description: "JWT Token",
+				example: "Bearer <token>",
+				// type: "string",
+			},
+		},
+	})
+	@ApiResponse({
+		status: 401,
+		description: "Login unsuccessful",
 	})
 	@ApiOperation({
 		summary: "Login user",

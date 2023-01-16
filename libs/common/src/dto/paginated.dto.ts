@@ -1,14 +1,13 @@
-interface PaginationMeta {
-	totalItems: number
-	itemCount: number
-	itemsPerPage: number
-	totalPages: number
-	currentPage: number
+import { ApiProperty, ApiHeader } from "@nestjs/swagger"
+export interface PaginationMeta {
+	total: number
+	count: number
+	pagination: number
+	pages: number
+	page: number
 }
 
-class PaginatedDto<TData> {
+export class PaginatedDto<TData> {
 	items: TData[]
 	meta: PaginationMeta
 }
-
-export { PaginationMeta, PaginatedDto }

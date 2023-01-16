@@ -3,6 +3,8 @@ import { RmqService } from "@app/common"
 import { RmqOptions } from "@nestjs/microservices"
 import { ValidationPipe, Logger } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
+import helmet from "helmet"
+import * as csurf from "csurf"
 import * as cookieParser from "cookie-parser"
 import {
 	DocumentBuilder,
@@ -26,8 +28,11 @@ async function bootstrap() {
 	logger.verbose(
 		`Application MONGODB_URI: ${configService.get<string>("MONGODB_URI")}`
 	)
+	app.use(helmet())
+	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
 	app.use(cookieParser())
+
 	app.connectMicroservice<RmqOptions>(rmqService.getOptions("AUTH", true))
 	const swaggerConfigBuilder = new DocumentBuilder()
 		.setTitle(APP_NAME)
