@@ -11,6 +11,9 @@ import {
 	SwaggerCustomOptions,
 	SwaggerModule,
 } from "@nestjs/swagger"
+import {
+	DynamicConfigService,
+} from '@app/common';
 import { AuthModule } from "./auth.module"
 
 async function bootstrap() {
@@ -18,16 +21,13 @@ async function bootstrap() {
 	const app = await NestFactory.create(AuthModule, {
 		logger: ["error", "warn", "debug", "verbose"],
 	})
-	const configService = app.get(ConfigService)
+	const configService = app.get(DynamicConfigService);
 	const rmqService = app.get<RmqService>(RmqService)
 
-	const APP_NAME = configService.get<string>("APP_NAME")
-	const APP_DESCRIPTION = configService.get<string>("APP_DESCRIPTION")
-	const APP_VERSION = configService.get<string>("APP_VERSION")
-	const PORT = configService.get<number>("PORT") || 3001
-	logger.verbose(
-		`Application MONGODB_URI: ${configService.get<string>("MONGODB_URI")}`
-	)
+	const APP_NAME = configService.get('APP_AUTH_NAME');
+	const APP_DESCRIPTION = configService.get('APP_AUTH_DESCRIPTION');
+	const APP_VERSION = configService.get('APP_AUTH_VERSION');
+	const PORT = configService.get('APP_AUTH_PORT', 8081);
 	app.use(helmet())
 	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
@@ -43,12 +43,13 @@ async function bootstrap() {
 	const swaggerConfig = swaggerConfigBuilder.build()
 	const customOptions: SwaggerCustomOptions = {
 		customSiteTitle: APP_NAME,
-	}
+		customfavIcon: '../../../assets/img/favicon.ico',
+	};
 	const document = SwaggerModule.createDocument(app, swaggerConfig)
 	SwaggerModule.setup("/", app, document, customOptions)
 
 	await app.startAllMicroservices()
 	await app.listen(PORT)
-	logger.verbose(`Application listening in port: ${PORT}`)
+	logger.verbose(`${APP_NAME} listening on port: ${PORT}`);
 }
 bootstrap()

@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { User } from './users/schemas/user.schema';
 import { Role } from "@app/common"
-
+import { DynamicConfigService } from '@app/common';
 export interface TokenPayload {
 	sub: string
 	name: string
@@ -16,15 +15,15 @@ export interface TokenPayload {
 @Injectable()
 export class AuthService {
 	constructor(
-		private readonly configService: ConfigService,
+		private readonly configService: DynamicConfigService,
 		private readonly jwtService: JwtService
 	) {}
 
 	async login(user: User, response: Response) {
-		const expires = new Date()
+		const expires = new Date();
 		expires.setSeconds(
-			expires.getSeconds() + this.configService.get("JWT_EXPIRATION")
-		)
+			expires.getSeconds() + this.configService.get('JWT_EXPIRATION')
+		);
 
 		const tokenPayload: TokenPayload = {
 			sub: user._id.toHexString(),
@@ -32,16 +31,16 @@ export class AuthService {
 			admin: Array.isArray(user.roles) && user.roles.includes(Role.ADMIN),
 			iat: Date.now(),
 			exp: expires.getTime(),
-		}
+		};
 
-		const token = this.jwtService.sign(tokenPayload)
-		response.header("Authorization", `Bearer ${token}`)
+		const token = this.jwtService.sign(tokenPayload);
+		response.header('Authorization', `Bearer ${token}`);
 	}
 
 	logout(response: Response) {
-		response.cookie("Authentication", "", {
+		response.cookie('Authentication', '', {
 			httpOnly: true,
 			expires: new Date(),
-		})
+		});
 	}
 }

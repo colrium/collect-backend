@@ -18,6 +18,8 @@
 		"forceConsistentCasingInFileNames": false,
 		"noFallthroughCasesInSwitch": false,
 		"paths": {
+			"@app/models": ["libs/common/src/models"],
+			"@app/models/*": ["libs/common/src/models/*"],
 			"@app/common": ["libs/common/src"],
 			"@app/common/*": ["libs/common/src/*"],
 			"@apps/auth": ["apps/auth/src"],

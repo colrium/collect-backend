@@ -1,7 +1,13 @@
-import { Module } from "@nestjs/common"
-import { ConfigModule, ConfigService } from "@nestjs/config"
+import { Module, Logger } from '@nestjs/common';
 import { JwtModule } from "@nestjs/jwt"
-import { RmqModule, DatabaseModule } from "@app/common"
+import {
+	RmqModule,
+	DatabaseModule,
+	DynamicMongoModelModule,
+	DynamicConfigModule,
+	DynamicConfigService
+} from '@app/common';
+import { message } from "@app/common"
 import * as Joi from "joi"
 import { AuthController } from "./auth.controller"
 import { AuthService } from "./auth.service"
@@ -11,26 +17,44 @@ import { UsersModule } from "./users/users.module"
 
 @Module({
 	imports: [
-		DatabaseModule,
-		UsersModule,
-		RmqModule,
-		ConfigModule.forRoot({
+		// DynamicMongoModelModule.forRoot(message),
+		DynamicConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
 				JWT_SECRET: Joi.string().required(),
 				JWT_EXPIRATION: Joi.string().required(),
 				MONGODB_URI: Joi.string().required(),
 			}),
-			envFilePath: "./apps/auth/.env",
+			folder: './apps/auth',
 		}),
+		UsersModule,
+		RmqModule,
+		DatabaseModule,
 		JwtModule.registerAsync({
-			useFactory: (configService: ConfigService) => ({
-				secret: configService.get<string>("JWT_SECRET"),
-				signOptions: {
-					expiresIn: `${configService.get("JWT_EXPIRATION")}s`,
-				},
-			}),
-			inject: [ConfigService],
+			imports: [
+				DynamicConfigModule.forRoot({
+					isGlobal: true,
+					validationSchema: Joi.object({
+						JWT_SECRET: Joi.string().required(),
+						JWT_EXPIRATION: Joi.string().required(),
+						MONGODB_URI: Joi.string().required(),
+					}),
+					folder: '.',
+				}),
+			],
+			useFactory: (configService: DynamicConfigService) => {
+				const logger = new Logger('DynamicConfigService JwtModule');
+				const jwtSecret = configService.get('JWT_SECRET');
+				const jwtExpiration = configService.get('JWT_EXPIRATION', 3600);
+				logger.verbose(`jwtSecret ${jwtSecret}`);
+				return {
+					secret: jwtSecret,
+					signOptions: {
+						expiresIn: `${jwtExpiration}s`,
+					},
+				};
+			},
+			inject: [DynamicConfigService],
 		}),
 	],
 	controllers: [AuthController],
