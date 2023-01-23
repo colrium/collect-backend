@@ -11,6 +11,7 @@ import {
 	SwaggerCustomOptions,
 	SwaggerModule,
 } from "@nestjs/swagger"
+import {  Transport } from '@nestjs/microservices';
 import {
 	DynamicConfigService,
 } from '@app/common';
@@ -24,16 +25,30 @@ async function bootstrap() {
 	const configService = app.get(DynamicConfigService);
 	const rmqService = app.get<RmqService>(RmqService)
 
+	const APP_SERTVICE_HOST = configService.get('AUTH_SERVICE_HOST');
+	const APP_SERTVICE_PORT = configService.get('AUTH_SERVICE_PORT');
+
+
+	const APP_FAVICON = configService.get('APP_AUTH_FAVICON');
 	const APP_NAME = configService.get('APP_AUTH_NAME');
 	const APP_DESCRIPTION = configService.get('APP_AUTH_DESCRIPTION');
 	const APP_VERSION = configService.get('APP_AUTH_VERSION');
 	const PORT = configService.get('APP_AUTH_PORT', 8081);
+
+	logger.verbose(`APP_FAVICON ${APP_FAVICON}`);
 	app.use(helmet())
 	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
 	app.use(cookieParser())
 
 	app.connectMicroservice<RmqOptions>(rmqService.getOptions("AUTH", true))
+	app.connectMicroservice({
+		transport: Transport.TCP,
+		options: {
+			host: APP_SERTVICE_HOST,
+			port: APP_SERTVICE_PORT,
+		},
+	});
 	const swaggerConfigBuilder = new DocumentBuilder()
 		.setTitle(APP_NAME)
 		.setDescription(APP_DESCRIPTION)
@@ -43,7 +58,10 @@ async function bootstrap() {
 	const swaggerConfig = swaggerConfigBuilder.build()
 	const customOptions: SwaggerCustomOptions = {
 		customSiteTitle: APP_NAME,
-		customfavIcon: '../../../assets/img/favicon.ico',
+		customfavIcon: APP_FAVICON,
+		swaggerOptions: {
+			persistAuthorization: true,
+		},
 	};
 	const document = SwaggerModule.createDocument(app, swaggerConfig)
 	SwaggerModule.setup("/", app, document, customOptions)

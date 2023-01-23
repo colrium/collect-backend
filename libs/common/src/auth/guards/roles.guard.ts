@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, mixin, Type } from "@nestjs/common"
-import RequestWithUser from "./request-with-user.interface"
-import { Role } from "./role.enum"
+import { Role, RequestWithUser } from '../types';
 
 export const RolesGuard = (roles: Role[]): Type<CanActivate> => {
 	class RoleGuardMixin implements CanActivate {

@@ -3,20 +3,21 @@ import { FilterQuery, Model, Types, UpdateQuery, SaveOptions, Connection } from 
 import { MongoDocument } from "./mongo.document"
 
 export abstract class MongoBaseRepository<TDocument extends MongoDocument> {
-	protected readonly logger = new Logger(TDocument.name)
+	protected readonly logger = new Logger('MongoBaseRepository');
 
 	constructor(
 		protected readonly _model: Model<TDocument>,
 		private readonly connection: Connection
-	) {
-
-	}
+	) {}
 
 	get model() {
-		return this._model
+		return this._model;
 	}
 
-	async validate(document: TDocument, options: SaveOptions = {}): Promise<boolean>{
+	async validate(
+		document: TDocument,
+		options: SaveOptions = {}
+	): Promise<boolean> {
 		return true;
 	}
 

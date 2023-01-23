@@ -23,7 +23,7 @@ import { DynamicConfigModule, DynamicConfigService } from '../dynamic';
 			useFactory: (configService: DynamicConfigService) => {
 				const logger = new Logger('DatabaseModule');
 				const uri = configService.get('MONGODB_URI');
-				logger.verbose(`Connecting to database with URI: ${uri}...`);
+				// logger.verbose(`Connecting to database with URI: ${uri}...`);
 				return {
 					uri: uri,
 					connectionFactory: (connection) => {

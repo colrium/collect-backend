@@ -20,7 +20,6 @@ export class DynamicConfigService {
 		// console.log(`process.env `, JSON.stringify(process.env));
 
 		if (fs.existsSync(envFile)) {
-			console.log(`envFile`, JSON.stringify(envFile));
 			this.envConfig = dotenv.parse(fs.readFileSync(envFile));
 		}
 		else {
@@ -28,9 +27,7 @@ export class DynamicConfigService {
 			if (!result.error) {
 				this.envConfig = result.parsed;
 			}
-			console.log(`dotenv.config() result`, JSON.stringify(result));
 		}
-		console.log(`this.envConfig `, JSON.stringify(this.envConfig));
 	}
 
 	get(key: string, defaultValue: any = null): any {

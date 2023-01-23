@@ -2,14 +2,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Types } from 'mongoose';
-import { TokenPayload } from '../auth.service';
-import { UsersService } from '../users/users.service';
-import { DynamicConfigService } from '@app/common';
+import { TokenPayload, AuthService } from '../auth.service';
+import { DynamicConfigService } from '../../dynamic';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor(
 		configService: DynamicConfigService,
-		private readonly usersService: UsersService
+		private readonly authService: AuthService
 	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromExtractors([
@@ -24,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	async validate({ sub }: TokenPayload) {
 		try {
-			return await this.usersService.findOne({
+			return await this.authService.findOne({
 				_id: new Types.ObjectId(sub),
 			});
 		} catch (err) {

@@ -22,27 +22,20 @@ export class UsersService {
 				email: data.email,
 			})
 		} catch (err) {
-			throw err
+			// throw err
 		}
 		if (user) {
 			throw new UnprocessableEntityException("Email already exists.")
 		}
 	}
 
-	async validateUser(email: string, password: string) {
-		const user = await this.usersRepository.findOne({ email })
-		const passwordIsValid = await Password.verify(password, user.password)
-		if (!passwordIsValid) {
-			throw new UnauthorizedException("Invalid Credentials.")
-		}
-		return user
-	}
+
 
 	async findOne(filterQuery: FilterQuery<User>) {
 		return await this.usersRepository.findOne(filterQuery)
 	}
 
 	async find(filterQuery: FilterQuery<User>) {
-		return await this.usersRepository.findOne(filterQuery)
+		return await this.usersRepository.find(filterQuery)
 	}
 }

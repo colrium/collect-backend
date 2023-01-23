@@ -27,17 +27,17 @@ export class RmqModule {
 			imports: [
 				ClientsModule.registerAsync([
 					{
-						// imports: [
-						// 	DynamicConfigModule.register({
-						// 		isGlobal: true,
-						// 		validationSchema: Joi.object({
-						// 			RABBIT_MQ_URI: Joi.string().required(),
-						// 			[`RABBIT_MQ_${name}_QUEUE`]:
-						// 				Joi.string().required(),
-						// 		}),
-						// 		folder: '.',
-						// 	}),
-						// ],
+						imports: [
+							DynamicConfigModule.register({
+								isGlobal: true,
+								validationSchema: Joi.object({
+									RABBIT_MQ_URI: Joi.string().required(),
+									[`RABBIT_MQ_${name}_QUEUE`]:
+										Joi.string().required(),
+								}),
+								folder: '.',
+							}),
+						],
 						name,
 						useFactory: (configService: DynamicConfigService) => ({
 							transport: Transport.RMQ,
