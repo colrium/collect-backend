@@ -36,18 +36,7 @@ import { User } from "./schemas/user.schema"
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 	@ApiOperation({ summary: 'Get users' })
-	// @ApiResponse({
-	// 	status: 200,
-	// 	description: "The found records",
-	// 	headers: {
-	// 		"X-Total-Count": {
-	// 			description: "Total number of records",
-	// 			example: 123,
-	// 			type: "number",
-	// 		},
-	// 	},
-	// 	type: [User],
-	// })
+
 	@PaginatedResponse(User)
 	@Get()
 	async find() {
