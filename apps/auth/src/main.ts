@@ -25,17 +25,16 @@ async function bootstrap() {
 	const configService = app.get(DynamicConfigService);
 	const rmqService = app.get<RmqService>(RmqService)
 
-	const APP_SERTVICE_HOST = configService.get('AUTH_SERVICE_HOST');
-	const APP_SERTVICE_PORT = configService.get('AUTH_SERVICE_PORT');
+	const APP_SERTVICE_HOST = configService.get('SERVICE_AUTH_HOST');
+	const APP_SERTVICE_PORT = configService.get('SERVICE_AUTH_PORT');
 
 
-	const APP_FAVICON = configService.get('APP_AUTH_FAVICON');
+	const APP_FAVICON = configService.get('APPS_FAVICON');
 	const APP_NAME = configService.get('APP_AUTH_NAME');
 	const APP_DESCRIPTION = configService.get('APP_AUTH_DESCRIPTION');
 	const APP_VERSION = configService.get('APP_AUTH_VERSION');
 	const PORT = configService.get('APP_AUTH_PORT', 8081);
 
-	logger.verbose(`APP_FAVICON ${APP_FAVICON}`);
 	app.use(helmet())
 	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
@@ -64,7 +63,7 @@ async function bootstrap() {
 		},
 	};
 	const document = SwaggerModule.createDocument(app, swaggerConfig)
-	SwaggerModule.setup("/", app, document, customOptions)
+	SwaggerModule.setup("/docs", app, document, customOptions)
 
 	await app.startAllMicroservices()
 	await app.listen(PORT)

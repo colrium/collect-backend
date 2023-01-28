@@ -6,7 +6,6 @@ import { DynamicConfigModule, DynamicConfigService } from '../dynamic';
 import * as cookieParser from 'cookie-parser';
 import * as Joi from 'joi';
 import { RmqModule } from '../rmq/rmq.module';
-import { AUTH_SERVICE } from './services';
 import { User, UserSchema } from './user.schema';
 import { AuthService } from './auth.service';
 import { AuthRepository } from './auth.repository';
@@ -22,11 +21,10 @@ import { JwtStrategy, LocalStrategy } from './strategies';
 		}),
 		DatabaseModule,
 		MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-		RmqModule.register({ name: AUTH_SERVICE }),
+		RmqModule.register({ name: 'AUTH' }),
 		JwtModule.registerAsync({
 			imports: [
 				DynamicConfigModule.forRoot({
-					isGlobal: true,
 					validationSchema: Joi.object({
 						JWT_SECRET: Joi.string().required(),
 						JWT_EXPIRATION: Joi.string().required(),
@@ -35,10 +33,8 @@ import { JwtStrategy, LocalStrategy } from './strategies';
 				}),
 			],
 			useFactory: (configService: DynamicConfigService) => {
-				const logger = new Logger('Auth Lib JwtModule');
 				const jwtSecret = configService.get('JWT_SECRET');
 				const jwtExpiration = configService.get('JWT_EXPIRATION', 3600);
-				logger.verbose(`jwtSecret ${jwtSecret}`);
 				return {
 					secret: jwtSecret,
 					signOptions: {
@@ -49,7 +45,7 @@ import { JwtStrategy, LocalStrategy } from './strategies';
 			inject: [DynamicConfigService],
 		}),
 	],
-	exports: [RmqModule, JwtService, AuthRepository],
+	exports: [RmqModule, JwtService, AuthRepository, AuthService],
 	providers: [
 		AuthService,
 		JwtService,

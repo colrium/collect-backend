@@ -5,12 +5,11 @@ import { PageDto } from "../dto/page.dto"
 export const PaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
 	return applyDecorators(
 		ApiOkResponse({
-			// title: `PaginatedResponseOf ${model.name}`,
 			description: `Successfully received ${model.name} list`,
 			headers: {
 				"Pagination-Count": {
 					description: `Total size of ${model.name} result list`,
-					// type: "number",
+					example: 2001,
 				},
 				"Pagination-Page": {
 					description: `Current page of total ${model.name} list`,

@@ -1,4 +1,5 @@
 import {
+	Logger,
 	Injectable,
 	UnauthorizedException,
 	UnprocessableEntityException,
@@ -22,6 +23,7 @@ export interface TokenPayload {
 
 @Injectable()
 export class AuthService {
+	private logger = new Logger(AuthService.name);
 	constructor(
 		private readonly configService: DynamicConfigService,
 		private readonly jwtService: JwtService,
@@ -34,14 +36,13 @@ export class AuthService {
 			expires.getSeconds() + this.configService.get('JWT_EXPIRATION')
 		);
 		const secret = this.configService.get('JWT_SECRET');
-
 		const tokenPayload: TokenPayload = {
 			sub: user._id.toHexString(),
 			name: user.fullName,
 			admin: Array.isArray(user.roles) && user.roles.includes(Role.ADMIN),
 			iat: Date.now(),
 		};
-		const token = this.jwtService.sign(tokenPayload);
+		const token = this.jwtService.sign(tokenPayload, { secret: secret });
 		response.header('Authorization', `Bearer ${token}`);
 	}
 
@@ -52,8 +53,17 @@ export class AuthService {
 		});
 	}
 
-	async validateLocalStrategy(email: string, password: string) {
-		const user = await this.authRepository.findOne({ email });
+	async validateLocalStrategy(username: string, password: string) {
+		const user = await this.authRepository.findOne({
+			$or: [
+				{
+					email: username,
+				},
+				{
+					phoneNumber: username,
+				},
+			],
+		});
 		const passwordIsValid = await Password.verify(password, user.password);
 		if (!passwordIsValid) {
 			throw new UnauthorizedException('Invalid Credentials.');
@@ -62,13 +72,16 @@ export class AuthService {
 	}
 
 	validateJwt(jwt: string) {
-		return this.jwtService.verify(jwt);
+		const secret = this.configService.get('JWT_SECRET');
+		return this.jwtService.verify(jwt, { secret });
 	}
 
 	async getJwtUser(jwt: string): Promise<User> {
 		const decodedToken = this.jwtService.decode(jwt);
 		const { sub } = decodedToken;
-		const user = await this.authRepository.findOne({_id: new ObjectId(sub)});
+		const user = await this.authRepository.findOne({
+			_id: new ObjectId(sub),
+		});
 		return user;
 	}
 

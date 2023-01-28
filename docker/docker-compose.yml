@@ -5,7 +5,7 @@ services:
   #   container_name: cbe-static
   #   build:
   #     context: .
-  #     dockerfile: ./apps/static/Dockerfile
+  #     dockerfile: ../apps/static/Dockerfile
   #     target: development
   #   command: npm run start:dev static
   #   restart: unless-stopped
@@ -20,7 +20,7 @@ services:
   #     - cbe-auth
   #     - cbe-rabbitmq
   #   volumes:
-  #     - .:/usr/src/app
+  #     - ../:/usr/src/app
   #     - /usr/src/app/node_modules
   #   ports:
   #     - '8080:8080'
@@ -28,7 +28,7 @@ services:
     container_name: cbe-auth
     build:
       context: .
-      dockerfile: ./apps/auth/Dockerfile
+      dockerfile: ../apps/auth/Dockerfile
       target: development
     command: npm run start:dev auth
     restart: unless-stopped
@@ -37,14 +37,14 @@ services:
     ports:
       - '8081:8081'
     env_file:
-      - ./development.env
+      - ../development.env
     depends_on:
       - cbe-mongodb-primary
       - cbe-mongodb-secondary
       - cbe-mongodb-arbiter
       - cbe-rabbitmq
     volumes:
-      - .:/usr/src/app
+      - ../:/usr/src/app/
       - /usr/src/app/node_modules
     networks:
       - cbe-msg-broker
@@ -54,7 +54,7 @@ services:
     container_name: cbe-users
     build:
       context: .
-      dockerfile: ./apps/users/Dockerfile
+      dockerfile: ../apps/users/Dockerfile
       target: development
     command: npm run start:dev users
     restart: unless-stopped
@@ -62,16 +62,15 @@ services:
       - no-new-privileges
     ports:
       - '8083:8083'
-      - '8084:8084'
     env_file:
-      - ./development.env
+      - ../development.env
     depends_on:
       - cbe-mongodb-primary
       - cbe-mongodb-secondary
       - cbe-mongodb-arbiter
       - cbe-rabbitmq
     volumes:
-      - .:/usr/src/app
+      - ../:/usr/src/app/
       - /usr/src/app/node_modules
     networks:
       - cbe-msg-broker
@@ -154,7 +153,7 @@ services:
     networks:
       - cbe-msg-broker
 
-  cbe-msg-broker:
+  cbe-kafka:
     image: 'bitnami/kafka:latest'
     container_name: cbe-msg-broker
     restart: unless-stopped

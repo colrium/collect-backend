@@ -14,16 +14,12 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as Joi from "joi"
 import { AuthController } from "./auth.controller"
-import { UsersModule } from "./users/users.module"
 
 @Module({
 	imports: [
+		RmqModule,
+		DatabaseModule,
 		DynamicConfigModule.forRoot({
-			validationSchema: Joi.object({
-				JWT_SECRET: Joi.string().required(),
-				JWT_EXPIRATION: Joi.string().required(),
-				MONGODB_URI: Joi.string().required(),
-			}),
 			folder: '.',
 		}),
 		ClientsModule.registerAsync([
@@ -32,8 +28,8 @@ import { UsersModule } from "./users/users.module"
 				imports: [
 					DynamicConfigModule.forRoot({
 						validationSchema: Joi.object({
-							USER_SERVICE_PORT: Joi.number().required(),
-							USER_SERVICE_HOST: Joi.string().required(),
+							SERVICE_USER_PORT: Joi.number().required(),
+							SERVICE_USER_HOST: Joi.string().required(),
 						}),
 						folder: '.',
 					}),
@@ -41,17 +37,14 @@ import { UsersModule } from "./users/users.module"
 				useFactory: async (configService: DynamicConfigService) => ({
 					transport: Transport.TCP,
 					options: {
-						host: configService.get('USER_SERVICE_HOST'),
-						port: configService.get('USER_SERVICE_PORT'),
+						host: configService.get('SERVICE_USER_HOST'),
+						port: configService.get('SERVICE_USER_PORT'),
 					},
 				}),
 				inject: [DynamicConfigService],
 			},
 		]),
 		AuthLibModule,
-		UsersModule,
-		RmqModule,
-		DatabaseModule,
 	],
 	controllers: [AuthController],
 	providers: [AuthService, JwtService],

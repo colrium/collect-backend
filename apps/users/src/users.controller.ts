@@ -1,12 +1,16 @@
 import {
 	UseGuards,
+	Req,
 	Query,
 	Param,
 	Body,
 	Controller,
 	Get,
 	Post,
-} from "@nestjs/common"
+	Put,
+	Patch,
+	SetMetadata,
+} from '@nestjs/common';
 import {
 	ApiTags,
 	ApiBearerAuth,
@@ -15,31 +19,32 @@ import {
 	ApiSecurity,
 	ApiOkResponse,
 	ApiParam,
-} from "@nestjs/swagger"
+} from '@nestjs/swagger';
 import { MessagePattern } from '@nestjs/microservices';
-import { ObjectId } from "bson"
+import { ObjectId } from 'bson';
 import {
 	ParseObjectIdPipe,
 	PaginatedResponse,
-	JwtAuthGuard,
+	Role,
+	Roles,
+	ClientAuthGuard,
+	PaginatedRequest,
 } from '@app/common';
-import { AuthGuard } from './auth.guard';
-// import { JwtAuthGuard } from "../guards/jwt-auth.guard"
-import { CreateUserRequest } from "./dto/create-user.request"
-import { UsersService } from "./users.service"
-import { User } from "./schemas/user.schema"
+import { User } from '@app/common/auth';
+import { UsersService } from './users.service';
 
 @ApiTags('Users')
-@Controller('users')
+@Controller()
 @ApiSecurity('bearer')
-@UseGuards(AuthGuard)
+@Roles(Role.SUPER_ADMIN, Role.ADMIN)
+@UseGuards(ClientAuthGuard)
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 	@ApiOperation({ summary: 'Get users' })
-
 	@PaginatedResponse(User)
+	@PaginatedRequest(User)
 	@Get()
-	async find() {
+	async find(@Req() req) {
 		return await this.usersService.find({});
 	}
 
@@ -57,10 +62,27 @@ export class UsersController {
 	async getById(@Param('id', ParseObjectIdPipe) id: ObjectId): Promise<User> {
 		return await this.usersService.findOne({ _id: id });
 	}
-
+	@ApiOperation({
+		summary: 'Create a new user',
+		operationId: 'test',
+	})
 	@Post()
 	async create(@Body() request: User) {
 		return this.usersService.create(request);
+	}
+	@ApiOperation({
+		summary: 'Partially Update a user by id',
+		operationId: 'test',
+	})
+	@Patch('/:id')
+	async partialUpdate(@Body() data: Partial<User>) {
+		// return this.usersService.create(data);
+	}
+
+	@ApiOperation({ summary: 'Fully Update a user by id', operationId: 'test' })
+	@Put('/:id')
+	async fullUpdate(@Req() req, @Body() data: Omit<User, 'id'>) {
+		// return this.usersService.create(data);
 	}
 
 	@MessagePattern({ role: 'user', cmd: 'get' })
