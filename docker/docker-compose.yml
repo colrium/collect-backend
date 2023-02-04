@@ -1,29 +1,23 @@
 version: '3.7'
 
 services:
-  # cbe-static:
-  #   container_name: cbe-static
-  #   build:
-  #     context: .
-  #     dockerfile: ../apps/static/Dockerfile
-  #     target: development
-  #   command: npm run start:dev static
-  #   restart: unless-stopped
-  #   security_opt:
-  #     - no-new-privileges
-  #   env_file:
-  #     - ./apps/static/development.env
-  #   depends_on:
-  #     - cbe-mongodb-primary
-  #     - cbe-mongodb-secondary
-  #     - cbe-mongodb-arbiter
-  #     - cbe-auth
-  #     - cbe-rabbitmq
-  #   volumes:
-  #     - ../:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   ports:
-  #     - '8080:8080'
+  cbe-static:
+    container_name: cbe-static
+    build:
+      context: .
+      dockerfile: ../apps/static/Dockerfile
+      target: development
+    command: npm run start:dev static
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    env_file:
+      - ../.env
+    volumes:
+      - ../:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '8080:8080'
   cbe-auth:
     container_name: cbe-auth
     build:
@@ -37,12 +31,7 @@ services:
     ports:
       - '8081:8081'
     env_file:
-      - ../development.env
-    depends_on:
-      - cbe-mongodb-primary
-      - cbe-mongodb-secondary
-      - cbe-mongodb-arbiter
-      - cbe-rabbitmq
+      - ../.env
     volumes:
       - ../:/usr/src/app/
       - /usr/src/app/node_modules
@@ -63,108 +52,13 @@ services:
     ports:
       - '8083:8083'
     env_file:
-      - ../development.env
-    depends_on:
-      - cbe-mongodb-primary
-      - cbe-mongodb-secondary
-      - cbe-mongodb-arbiter
-      - cbe-rabbitmq
+      - ../.env
     volumes:
       - ../:/usr/src/app/
       - /usr/src/app/node_modules
     networks:
       - cbe-msg-broker
       - cbe-db
-
-  cbe-rabbitmq:
-    image: rabbitmq
-    container_name: cbe-rabbitmq
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges
-    ports:
-      - '5672:5672'
-    networks:
-      - cbe-msg-broker
-
-  cbe-mongodb-primary:
-    image: bitnami/mongodb:latest
-    container_name: cbe-mongodb-primary
-    restart: unless-stopped
-    environment:
-      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-primary
-      - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_ROOT_PASSWORD=password123
-      - MONGODB_REPLICA_SET_KEY=replicasetkey123
-    volumes:
-      - 'cbe_mongodb_master_data:/bitnami/mongodb'
-    ports:
-      - '27017:27017'
-    networks:
-      - cbe-db
-
-  cbe-mongodb-secondary:
-    image: bitnami/mongodb:latest
-    container_name: cbe-mongodb-secondary
-    restart: unless-stopped
-    depends_on:
-      - cbe-mongodb-primary
-    environment:
-      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-secondary
-      - MONGODB_REPLICA_SET_MODE=secondary
-      - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
-      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
-      - MONGODB_REPLICA_SET_KEY=replicasetkey123
-
-  cbe-mongodb-arbiter:
-    image: bitnami/mongodb:latest
-    container_name: cbe-mongodb-arbiter
-    restart: unless-stopped
-    depends_on:
-      - cbe-mongodb-primary
-    environment:
-      - MONGODB_ADVERTISED_HOSTNAME=cbe-mongodb-arbiter
-      - MONGODB_REPLICA_SET_MODE=arbiter
-      - MONGODB_INITIAL_PRIMARY_HOST=cbe-mongodb-primary
-      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
-      - MONGODB_REPLICA_SET_KEY=replicasetkey123
-    networks:
-      - cbe-db
-
-  cbe-mongodb-client:
-    image: mongoclient/mongoclient
-    container_name: cbe-mongodb-client
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges
-    ports:
-      - 8091:3000
-    depends_on:
-      - cbe-mongodb-primary
-    networks:
-      - cbe-db
-
-  cbe-zookeeper:
-    image: 'bitnami/zookeeper:latest'
-    container_name: cbe-zookeeper
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges
-    networks:
-      - cbe-msg-broker
-
-  cbe-kafka:
-    image: 'bitnami/kafka:latest'
-    container_name: cbe-msg-broker
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges
-    networks:
-      - cbe-msg-broker
-
-volumes:
-  cbe_mongodb_master_data:
-
 networks:
   cbe-msg-broker:
     driver: bridge

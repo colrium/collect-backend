@@ -6,6 +6,7 @@ services:
     container_name: cbe-mongodb
     restart: unless-stopped
     environment:
+      # MONGODB_EXTRA_FLAGS: --bind_ip_all
       MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb
       MONGODB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
       MONGODB_USERNAME: ${MONGODB_USERNAME}
@@ -14,7 +15,7 @@ services:
     volumes:
       - 'cbe_mongodb_data:/bitnami/mongodb'
     ports:
-      - '8061:27017'
+      - '27017:27017'
 
   cbe-mongodb-client:
     image: mongoclient/mongoclient
@@ -33,4 +34,5 @@ volumes:
 
 networks:
   default:
-    name: cbe-mongo-net
+    external:
+      name: cbe-app-tier

@@ -8,4 +8,8 @@ services:
     security_opt:
       - no-new-privileges
     ports:
-      - '8050:5672'
+      - '5672:5672'
+networks:
+  default:
+    external:
+      name: cbe-app-tier

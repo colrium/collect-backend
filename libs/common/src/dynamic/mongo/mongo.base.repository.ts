@@ -1,8 +1,15 @@
-import { Logger, NotFoundException } from "@nestjs/common"
-import { FilterQuery, Model, Types, UpdateQuery, SaveOptions, Connection } from "mongoose"
-import { MongoDocument } from "./mongo.document"
+import { Logger, NotFoundException } from '@nestjs/common';
+import {
+	FilterQuery,
+	Model,
+	Types,
+	UpdateQuery,
+	SaveOptions,
+	Connection,
+} from 'mongoose';
+import { MongoBaseDocument } from './mongo.base.document';
 
-export abstract class MongoBaseRepository<TDocument extends MongoDocument> {
+export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 	protected readonly logger = new Logger('MongoBaseRepository');
 
 	constructor(

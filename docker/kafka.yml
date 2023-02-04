@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  cbe-zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    container_name: cbe-zookeeper
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    ports:
+      - '2181:2181'
+
+  cbe-kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: cbe-kafka
+    restart: unless-stopped
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=cbe-zookeeper:2181
+    security_opt:
+      - no-new-privileges
+
+
+networks:
+  default:
+    name: cbe-msg-broker

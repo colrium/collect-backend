@@ -10,6 +10,5 @@
 	"bracketSameLine": false,
 	"endOfLine": "lf",
 	"quoteProps": "as-needed",
-	"jsxBracketSameLine": false,
-	"printWidth": 80
+	"jsxBracketSameLine": false
 }

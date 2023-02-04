@@ -15,14 +15,14 @@ export const PaginatedRequest = <TModel extends Type<any>>(model: TModel) => {
 			name: 'pagination',
 			description: `Number of ${model.name} records per page`,
 			type: Number,
-			default: 10,
+			// default: 10,
 			required: false,
 		}),
 		ApiQuery({
 			name: 'page',
 			description: `Page Number of to evaluate number of ${model.name} records to skip`,
 			type: Number,
-			default: 1,
+			// default: 1,
 			required: false,
 		})
 	);

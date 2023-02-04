@@ -27,7 +27,7 @@ export class DynamicConfigService {
 					this.envConfig = result.parsed;
 				}
 			}
-
+			console.log('this.envConfig', this.envConfig);
 
 
 	}

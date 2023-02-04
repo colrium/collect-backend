@@ -8,4 +8,7 @@ services:
     security_opt:
       - no-new-privileges
     ports:
-      - '8050:5672'
+      - '5672:5672'
+networks:
+  default:
+    name: cbe-msg-broker
