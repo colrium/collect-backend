@@ -1,7 +1,7 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { IsValidUUID } from '../../decorators';
 import { MongoBaseDocument, MongoSchema } from '../../dynamic/mongo';
 
@@ -12,7 +12,7 @@ export type UserPasswordCodeDocument = UserPasswordCode & Document;
 })
 export class UserPasswordCode extends MongoBaseDocument {
 	@ApiProperty({
-		example: uuid.v4(),
+		example: uuidv4(),
 		description: "The user's Id",
 	})
 	@IsString()
@@ -20,7 +20,7 @@ export class UserPasswordCode extends MongoBaseDocument {
 	@Prop({ type: String, required: true })
 	userId: string;
 	@ApiProperty({
-		example: uuid.v4(),
+		example: uuidv4(),
 		description: "The teams's Id",
 	})
 	@Prop({ type: String, required: true })

@@ -1,12 +1,12 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { MongoBaseDocument, MongoSchema } from '../../dynamic/mongo';
+import { MongoBaseDocument } from '../../dynamic/mongo';
 import { Role } from '../types';
 
 export type UserDocument = User & Document;
 
-@MongoSchema({
+@Schema({
 	collection: 'users',
 })
 export class User extends MongoBaseDocument {

@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common"
-import { User } from "../user.schema"
+import { User } from '../models';
 
 export const getExecutionContextUser = (context: ExecutionContext): User => {
 	if (context.getType() === "http") {

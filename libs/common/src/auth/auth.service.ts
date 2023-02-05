@@ -1,18 +1,14 @@
-import {
-	Logger,
-	Injectable,
-	UnauthorizedException,
-	UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { FilterQuery } from 'mongoose';
+import { ObjectId } from 'bson';
 import { Response } from 'express';
-import { User } from './user.schema';
-import { Role } from './types';
+import { FilterQuery } from 'mongoose';
 import { DynamicConfigService } from '../dynamic';
-import { Password } from '../utils';
-import { AuthRepository } from './auth.repository';
-import { ObjectId } from "bson"
+import { Cryptography } from '../utils';
+import { User, UserPassword } from './models';
+import { Role } from './types';
+import { UserPasswordRepository } from './user.password.repository';
+import { UserRepository } from './user.repository';
 
 export interface TokenPayload {
 	sub: string;
@@ -27,7 +23,8 @@ export class AuthService {
 	constructor(
 		private readonly configService: DynamicConfigService,
 		private readonly jwtService: JwtService,
-		private readonly authRepository: AuthRepository
+		private readonly userRepository: UserRepository,
+		private readonly userPasswordRepository: UserPasswordRepository
 	) {}
 
 	async login(user: User, response: Response) {
@@ -54,7 +51,7 @@ export class AuthService {
 	}
 
 	async validateLocalStrategy(username: string, password: string) {
-		const user = await this.authRepository.findOne({
+		const user = await this.userRepository.findOne({
 			$or: [
 				{
 					email: username,
@@ -64,7 +61,29 @@ export class AuthService {
 				},
 			],
 		});
-		const passwordIsValid = await Password.verify(password, user.password);
+		if (!user) {
+			throw new UnauthorizedException('User not found');
+			return;
+		}
+		const passwordDoc: UserPassword =
+			await this.userPasswordRepository.findOne({
+				$and: [
+					{
+						userId: user.id,
+					},
+					{
+						isActive: true,
+					},
+				],
+			});
+		if (!passwordDoc) {
+			throw new UnauthorizedException('Invalid Credentials.');
+		}
+		const passwordIsValid = await Cryptography.verifyHash(
+			password,
+			passwordDoc.hash
+		);
+
 		if (!passwordIsValid) {
 			throw new UnauthorizedException('Invalid Credentials.');
 		}
@@ -79,17 +98,17 @@ export class AuthService {
 	async getJwtUser(jwt: string): Promise<User> {
 		const decodedToken = this.jwtService.decode(jwt);
 		const { sub } = decodedToken;
-		const user = await this.authRepository.findOne({
+		const user = await this.userRepository.findOne({
 			_id: new ObjectId(sub),
 		});
 		return user;
 	}
 
 	async findOne(filterQuery: FilterQuery<User>) {
-		return await this.authRepository.findOne(filterQuery);
+		return await this.userRepository.findOne(filterQuery);
 	}
 
 	async find(filterQuery: FilterQuery<User>) {
-		return await this.authRepository.findOne(filterQuery);
+		return await this.userRepository.findOne(filterQuery);
 	}
 }

@@ -1,8 +1,8 @@
-import { Module, Logger } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
-import { MongooseModule } from "@nestjs/mongoose"
-import { toJSON as toJSONPlugin } from "./tojson.plugin"
 import { DynamicConfigModule, DynamicConfigService } from '../dynamic';
+import { toJSON as toJSONPlugin } from './tojson.plugin';
 @Module({
 	imports: [
 		DynamicConfigModule.register({
@@ -22,8 +22,7 @@ import { DynamicConfigModule, DynamicConfigService } from '../dynamic';
 			],
 			useFactory: (configService: DynamicConfigService) => {
 				const logger = new Logger('DatabaseModule');
-				// const uri = configService.get('MONGODB_URI');
-				const uri = `mongodb://collect:password123@cbe-mongodb:27017/collect`;
+				const uri = configService.get('MONGODB_URI');
 				logger.verbose(`Connecting to database with URI: ${uri}...`);
 				return {
 					uri: uri,

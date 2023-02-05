@@ -3,8 +3,8 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"command": "yarn start:debug",
-			"label": "start:debug",
+			"command": "yarn start:debug auth",
+			"label": "start:debug:auth",
 			"isBackground": true,
 			"problemMatcher": [
 				{
@@ -32,7 +32,7 @@
 			}
 		},
 		{
-			"label": "stop: bg: all",
+			"label": "stop:bg:all",
 			"command": "echo ${input:terminate}",
 			"type": "shell"
 		}

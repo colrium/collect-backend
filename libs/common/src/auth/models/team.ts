@@ -1,7 +1,7 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { IsValidUUID } from '../../decorators';
 import { MongoBaseDocument } from '../../dynamic/mongo';
 
@@ -27,7 +27,7 @@ export class Team extends MongoBaseDocument {
 	description: string;
 
 	@ApiProperty({
-		example: uuid.v4(),
+		example: uuidv4(),
 		description: "The lead user's Id",
 	})
 	@IsValidUUID()

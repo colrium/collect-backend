@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import {
 	IsObjectIdString,
 	MongoBaseDocument,
@@ -15,7 +15,7 @@ export type UserRoleDocument = UserRole & Document;
 })
 export class UserRole extends MongoBaseDocument {
 	@ApiProperty({
-		example: uuid.v4(),
+		example: uuidv4(),
 		description: "The user's Id",
 	})
 	@IsObjectIdString()
