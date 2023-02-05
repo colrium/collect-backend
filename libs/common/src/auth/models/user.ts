@@ -1,32 +1,23 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { MongoBaseDocument } from '../../dynamic/mongo';
+import { MongoBaseDocument, MongoSchema } from '../../dynamic/mongo';
 import { Role } from '../types';
 
 export type UserDocument = User & Document;
 
-@Schema({
-	collection: 'users',
+@MongoSchema({
+	collection: 'users'
 })
 export class User extends MongoBaseDocument {
 	@ApiProperty({
 		example: 'user@example.com',
-		description: 'The email of the User',
+		description: 'The email of the User'
 	})
 	@IsEmail()
 	@IsString()
 	@Prop({ type: String, required: true, unique: true })
 	email: string;
-
-	@ApiProperty({
-		example: 'Pj3yNRWQVCLjQfQL',
-		description: "The user's Password",
-	})
-	@IsString()
-	@IsNotEmpty()
-	@Prop({ type: String, required: true, private: true })
-	password: string;
 
 	@ApiProperty({ example: 'John', description: 'The first name of the User' })
 	@IsString()
@@ -42,7 +33,7 @@ export class User extends MongoBaseDocument {
 
 	@ApiProperty({
 		example: '070000000',
-		description: 'The phone number of the User',
+		description: 'The phone number of the User'
 	})
 	@IsString()
 	@IsNotEmpty()
@@ -52,10 +43,10 @@ export class User extends MongoBaseDocument {
 	@ApiProperty({
 		type: 'array',
 		items: {
-			type: 'string',
+			type: 'string'
 		},
 		example: [Role.GUEST],
-		description: 'The roles of the User',
+		description: 'The roles of the User'
 	})
 	@Prop([{ type: String, enum: Role, default: [Role.GUEST], private: true }])
 	roles: Role[];
@@ -69,7 +60,7 @@ export class User extends MongoBaseDocument {
 	@IsNotEmpty()
 	@Prop({
 		type: String,
-		default: 'active',
+		default: 'active'
 	})
 	status: string;
 }
@@ -82,7 +73,7 @@ ModelSchema.index({
 	firstName: 'text',
 	lastName: 'text',
 	status: 'text',
-	staffId: 'text',
+	staffId: 'text'
 });
 
 ModelSchema.virtual('fullName').get(function (this: UserDocument) {

@@ -1,11 +1,11 @@
 import { Logger, NotFoundException } from '@nestjs/common';
 import {
+	Connection,
 	FilterQuery,
 	Model,
-	Types,
-	UpdateQuery,
 	SaveOptions,
-	Connection,
+	Types,
+	UpdateQuery
 } from 'mongoose';
 import { MongoBaseDocument } from './mongo.base.document';
 
@@ -29,12 +29,15 @@ export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 	}
 
 	async create(
-		document: Omit<TDocument, '_id'>,
+		document: Omit<
+			TDocument,
+			'_id' | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
+		>,
 		options?: SaveOptions
 	): Promise<TDocument> {
 		const createdDocument = new this._model({
 			...document,
-			_id: new Types.ObjectId(),
+			_id: new Types.ObjectId()
 		});
 		return (
 			await createdDocument.save(options)
@@ -64,7 +67,7 @@ export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 			update,
 			{
 				lean: true,
-				new: true,
+				new: true
 			}
 		);
 
@@ -86,7 +89,7 @@ export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 		return this._model.findOneAndUpdate(filterQuery, document, {
 			lean: true,
 			upsert: true,
-			new: true,
+			new: true
 		});
 	}
 

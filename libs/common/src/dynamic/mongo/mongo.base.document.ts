@@ -1,19 +1,12 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { SchemaTypes, Types } from 'mongoose';
-// import { MongoSchema } from './decorators';
 import { v4 as uuidv4 } from 'uuid';
 import { IsValidUUID } from '../../decorators';
+import { MongoSchema } from './decorators';
 
-@Schema({
-	toJSON: {
-		virtuals: true,
-		getters: true,
-	},
-	toObject: { virtuals: true, getters: true },
-	versionKey: false,
-})
+@MongoSchema()
 export class MongoBaseDocument {
 	@Exclude()
 	@Prop({ type: SchemaTypes.ObjectId })
@@ -21,19 +14,22 @@ export class MongoBaseDocument {
 
 	@ApiProperty({
 		example: uuidv4(),
-		description: 'The id of the record',
+		description: 'The id of the record'
 	})
 	@Expose({ name: 'id' })
 	@IsValidUUID()
-	@Prop({ type: String, required: true })
-	id: string = uuidv4();
+	@Prop({ type: String, default: uuidv4() })
+	id: string;
 
+	@Exclude()
 	@Prop({ type: Date, default: Date.now })
 	createdAt: Date;
 
+	@Exclude()
 	@Prop({ type: Date, default: null })
 	updatedAt: Date;
 
+	@Exclude()
 	@Prop({ type: Date, default: null })
 	deletedAt: Date;
 }

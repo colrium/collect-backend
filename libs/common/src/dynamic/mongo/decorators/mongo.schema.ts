@@ -9,12 +9,13 @@ export interface MongoSchemaOptions {
 	collection?: string;
 }
 const defaultOptions: MongoSchemaOptions = {
+	_id: false,
 	toJSON: {
 		virtuals: true,
-		getters: true,
+		getters: true
 	},
 	toObject: { virtuals: true, getters: true },
-	versionKey: false,
+	versionKey: false
 };
 export const MongoSchema = <TOptions extends Partial<MongoSchemaOptions>>(
 	options?: TOptions
@@ -22,7 +23,7 @@ export const MongoSchema = <TOptions extends Partial<MongoSchemaOptions>>(
 	return applyDecorators(
 		Schema({
 			...defaultOptions,
-			...options,
+			...options
 		})
 	);
 };

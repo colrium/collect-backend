@@ -1,61 +1,60 @@
 import {
-	Controller,
+	AuthService,
+	ContextUser,
+	LocalAuthGuard,
+	User
+} from '@app/common/auth';
+import {
 	Body,
-	Param,
+	Controller,
 	Get,
+	Logger,
+	OnModuleInit,
+	Param,
 	Post,
 	Res,
-	UseGuards,
-	Logger,
+	UseGuards
 } from '@nestjs/common';
-import { MessagePattern } from "@nestjs/microservices"
+import { MessagePattern } from '@nestjs/microservices';
 import {
-	ApiTags,
-	ApiProperty,
-	ApiHeader,
-	ApiBearerAuth,
-	ApiResponse,
-	ApiOperation,
-	ApiSecurity,
 	ApiOkResponse,
+	ApiOperation,
 	ApiParam,
-} from "@nestjs/swagger"
-import { Response } from "express"
-import {
-	AuthService,
-	LocalAuthGuard,
-	JwtAuthGuard,
-	User,
-	ContextUser,
-} from '@app/common/auth';
+	ApiProperty,
+	ApiResponse,
+	ApiTags
+} from '@nestjs/swagger';
+import { Response } from 'express';
 import {
 	ForgotPasswordDTO,
 	ForgotPasswordResponse,
-	ResetPasswordDTO,
-	ResetPasswordResponse,
 	LoginDTO,
+	ResetPasswordDTO,
+	ResetPasswordResponse
 } from './types';
 
-
 export class LoginPrerequisiteRes {
-	@ApiProperty({ example: "active", description: "Status of the user" })
-	status: string
+	@ApiProperty({ example: 'active', description: 'Status of the user' })
+	status: string;
 
-	@ApiProperty({ example: "John Doe", description: "Full name of the user" })
-	fullName?: string
+	@ApiProperty({ example: 'John Doe', description: 'Full name of the user' })
+	fullName?: string;
 
 	@ApiProperty({
-		example: "http://example.com/file/626562",
-		description: "Url of the User's Avatar",
+		example: 'http://example.com/file/626562',
+		description: "Url of the User's Avatar"
 	})
-	avatar?: string
+	avatar?: string;
 }
 
 @ApiTags('Auth')
 @Controller()
-export class AuthController {
+export class AuthController implements OnModuleInit {
 	private logger = new Logger(AuthController.name);
 	constructor(private readonly authService: AuthService) {}
+	onModuleInit() {
+		this.authService.assertDefaultUser();
+	}
 
 	@ApiResponse({
 		status: 201,
@@ -64,17 +63,17 @@ export class AuthController {
 		headers: {
 			Authorization: {
 				description: 'JWT Token',
-				example: 'Bearer <token>',
+				example: 'Bearer <token>'
 				// type: "string",
-			},
-		},
+			}
+		}
 	})
 	@ApiResponse({
 		status: 401,
-		description: 'Login unsuccessful',
+		description: 'Login unsuccessful'
 	})
 	@ApiOperation({
-		summary: 'Login user',
+		summary: 'Login user'
 	})
 	@UseGuards(LocalAuthGuard)
 	@Post('login')
@@ -88,16 +87,16 @@ export class AuthController {
 	}
 
 	@ApiOperation({
-		summary: 'Get login prerequisites',
+		summary: 'Get login prerequisites'
 	})
 	@ApiOkResponse({
 		description: 'The login email prerequisites',
-		type: LoginPrerequisiteRes,
+		type: LoginPrerequisiteRes
 	})
 	@ApiParam({
 		name: 'email',
 		type: 'string',
-		description: 'The login intension email',
+		description: 'The login intension email'
 	})
 	@Get('login/:email')
 	async loginPrerequisite(
@@ -108,11 +107,11 @@ export class AuthController {
 		// response.send(user)
 	}
 	@ApiOperation({
-		summary: 'register',
+		summary: 'register'
 	})
 	@ApiOkResponse({
 		description: 'The new user registration',
-		type: User,
+		type: User
 	})
 	@Post('register')
 	async register(
@@ -126,10 +125,10 @@ export class AuthController {
 	@ApiOkResponse({
 		status: 200,
 		description: 'Account recovery',
-		type: ForgotPasswordResponse,
+		type: ForgotPasswordResponse
 	})
 	@ApiOperation({
-		summary: 'Account recovery',
+		summary: 'Account recovery'
 	})
 	@Post('forgot-password')
 	async forgotPassword(
@@ -138,17 +137,17 @@ export class AuthController {
 	) {
 		// await this.authService.register(body, response);
 		response.send({
-			message: 'Account recovery mail sent',
+			message: 'Account recovery mail sent'
 		});
 	}
 
 	@ApiOkResponse({
 		status: 200,
 		description: 'Reset Password OK',
-		type: ResetPasswordResponse,
+		type: ResetPasswordResponse
 	})
 	@ApiOperation({
-		summary: 'Reset Password',
+		summary: 'Reset Password'
 	})
 	@Post('reset-password')
 	async resetPassword(
@@ -157,7 +156,7 @@ export class AuthController {
 	) {
 		// await this.authService.register(body, response);
 		response.send({
-			message: 'Password reset',
+			message: 'Password reset'
 		});
 	}
 
@@ -180,5 +179,4 @@ export class AuthController {
 			return false;
 		}
 	}
-
 }

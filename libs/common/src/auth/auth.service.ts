@@ -1,6 +1,10 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+	Injectable,
+	Logger,
+	NotFoundException,
+	UnauthorizedException
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ObjectId } from 'bson';
 import { Response } from 'express';
 import { FilterQuery } from 'mongoose';
 import { DynamicConfigService } from '../dynamic';
@@ -27,6 +31,39 @@ export class AuthService {
 		private readonly userPasswordRepository: UserPasswordRepository
 	) {}
 
+	async createDefaultUser() {
+		const user: User = await this.userRepository.create({
+			email: 'colrium@gmail.com',
+			firstName: 'John',
+			lastName: 'Doe',
+			roles: [Role.SUPER_ADMIN],
+			phoneNumber: '254724146857',
+			status: 'active',
+			staffId: null
+		});
+		const userPassword = await this.userPasswordRepository.create({
+			userId: user.id,
+			hash: 'Pj3yNRWQVCLjQfQL',
+			isActive: true,
+			setOn: new Date()
+		});
+	}
+
+	assertDefaultUser() {
+		this.userRepository
+			.findOne({ email: 'colrium@gmail.com' })
+			.then((user) => {
+				if (!user) {
+					this.createDefaultUser();
+				}
+			})
+			.catch((err) => {
+				if (err instanceof NotFoundException) {
+					this.createDefaultUser();
+				}
+			});
+	}
+
 	async login(user: User, response: Response) {
 		const expires = new Date();
 		expires.setSeconds(
@@ -34,10 +71,10 @@ export class AuthService {
 		);
 		const secret = this.configService.get('JWT_SECRET');
 		const tokenPayload: TokenPayload = {
-			sub: user._id.toHexString(),
+			sub: user.id,
 			name: user.fullName,
 			admin: Array.isArray(user.roles) && user.roles.includes(Role.ADMIN),
-			iat: Date.now(),
+			iat: Date.now()
 		};
 		const token = this.jwtService.sign(tokenPayload, { secret: secret });
 		response.header('Authorization', `Bearer ${token}`);
@@ -46,7 +83,7 @@ export class AuthService {
 	logout(response: Response) {
 		response.cookie('Authentication', '', {
 			httpOnly: true,
-			expires: new Date(),
+			expires: new Date()
 		});
 	}
 
@@ -54,12 +91,12 @@ export class AuthService {
 		const user = await this.userRepository.findOne({
 			$or: [
 				{
-					email: username,
+					email: username
 				},
 				{
-					phoneNumber: username,
-				},
-			],
+					phoneNumber: username
+				}
+			]
 		});
 		if (!user) {
 			throw new UnauthorizedException('User not found');
@@ -69,12 +106,12 @@ export class AuthService {
 			await this.userPasswordRepository.findOne({
 				$and: [
 					{
-						userId: user.id,
+						userId: user.id
 					},
 					{
-						isActive: true,
-					},
-				],
+						isActive: true
+					}
+				]
 			});
 		if (!passwordDoc) {
 			throw new UnauthorizedException('Invalid Credentials.');
@@ -99,7 +136,7 @@ export class AuthService {
 		const decodedToken = this.jwtService.decode(jwt);
 		const { sub } = decodedToken;
 		const user = await this.userRepository.findOne({
-			_id: new ObjectId(sub),
+			id: sub
 		});
 		return user;
 	}
@@ -110,5 +147,8 @@ export class AuthService {
 
 	async find(filterQuery: FilterQuery<User>) {
 		return await this.userRepository.findOne(filterQuery);
+	}
+	onModuleInit() {
+		this.logger.log(`The module has been initialized.`);
 	}
 }

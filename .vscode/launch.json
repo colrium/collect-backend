@@ -10,10 +10,8 @@
 			"name": "Auth app",
 			"port": 9229,
 			"restart": true,
-			"stopOnEntry": false,
 			"preLaunchTask": "start:debug:auth",
 			"postDebugTask": "stop:bg:all",
-			"protocol": "inspector",
 			"skipFiles": [
 				"<node_internals>/**/*.js",
 				"${workspaceRoot}/node_modules/**/*.js"
