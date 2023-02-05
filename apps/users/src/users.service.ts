@@ -1,7 +1,7 @@
 import {
 	Injectable,
 	UnauthorizedException,
-	UnprocessableEntityException,
+	UnprocessableEntityException
 } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
 import { UsersRepository } from './users.repository';
@@ -22,7 +22,7 @@ export class UsersService {
 		let user: User;
 		try {
 			user = await this.repository.findOne({
-				email: data.email,
+				email: data.email
 			});
 		} catch (err) {
 			// throw err

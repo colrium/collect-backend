@@ -10,12 +10,12 @@ import { Cryptography } from '../../utils';
 export type UserPasswordDocument = UserPassword & Document;
 
 @MongoSchema({
-	collection: 'user.password',
+	collection: 'user.password'
 })
 export class UserPassword extends MongoBaseDocument {
 	@ApiProperty({
 		example: uuidv4(),
-		description: 'The User Id',
+		description: 'The User Id'
 	})
 	@IsString()
 	@IsValidUUID()
@@ -41,7 +41,7 @@ export class UserPassword extends MongoBaseDocument {
 const ModelSchema = SchemaFactory.createForClass(UserPassword);
 
 ModelSchema.index({
-	password: 'text',
+	password: 'text'
 });
 
 ModelSchema.pre('save', async function (this: UserPassword, next) {

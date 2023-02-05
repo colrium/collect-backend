@@ -10,7 +10,7 @@ export type TeamDocument = Team & Document;
 export class Team extends MongoBaseDocument {
 	@ApiProperty({
 		example: 'Team A',
-		description: "The teams's Name",
+		description: "The teams's Name"
 	})
 	@IsString()
 	@IsNotEmpty()
@@ -19,7 +19,7 @@ export class Team extends MongoBaseDocument {
 
 	@ApiProperty({
 		example: 'Team A Description',
-		description: "The teams's Description",
+		description: "The teams's Description"
 	})
 	@IsString()
 	@IsNotEmpty()
@@ -28,7 +28,7 @@ export class Team extends MongoBaseDocument {
 
 	@ApiProperty({
 		example: uuidv4(),
-		description: "The lead user's Id",
+		description: "The lead user's Id"
 	})
 	@IsValidUUID()
 	@Prop({ type: String, required: false, default: null })
@@ -45,7 +45,7 @@ const ModelSchema = SchemaFactory.createForClass(Team);
 
 ModelSchema.index({
 	name: 'text',
-	description: 'text',
+	description: 'text'
 });
 
 export { ModelSchema as TeamSchema };

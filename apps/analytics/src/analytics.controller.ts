@@ -3,10 +3,10 @@ import { AnalyticsService } from './analytics.service';
 
 @Controller()
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+	constructor(private readonly analyticsService: AnalyticsService) {}
 
-  @Get()
-  getHello(): string {
-    return this.analyticsService.getHello();
-  }
+	@Get()
+	getHello(): string {
+		return this.analyticsService.getHello();
+	}
 }

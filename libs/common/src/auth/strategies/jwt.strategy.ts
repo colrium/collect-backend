@@ -15,16 +15,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 				ExtractJwt.fromAuthHeaderAsBearerToken(),
 				(request: any) => {
 					return request?.Authorization || request?.Authentication;
-				},
+				}
 			]),
-			secretOrKey: configService.get('JWT_SECRET'),
+			secretOrKey: configService.get('JWT_SECRET')
 		});
 	}
 
 	async validate({ sub }: TokenPayload) {
 		try {
 			return await this.authService.findOne({
-				_id: new Types.ObjectId(sub),
+				_id: new Types.ObjectId(sub)
 			});
 		} catch (err) {
 			throw new UnauthorizedException();

@@ -1,24 +1,20 @@
+import { DynamicConfigService, RmqService } from '@app/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { RmqService } from '@app/common';
-import { RmqOptions } from '@nestjs/microservices';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import helmet from 'helmet';
-import * as csurf from 'csurf';
-import * as cookieParser from 'cookie-parser';
+import { RmqOptions, Transport } from '@nestjs/microservices';
 import {
 	DocumentBuilder,
 	SwaggerCustomOptions,
-	SwaggerModule,
+	SwaggerModule
 } from '@nestjs/swagger';
-import { Transport } from '@nestjs/microservices';
-import { DynamicConfigService } from '@app/common';
+import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { UsersModule } from './users.module';
 
 async function bootstrap() {
 	const logger = new Logger('bootstrap');
 	const app = await NestFactory.create(UsersModule, {
-		logger: ['error', 'warn', 'debug', 'verbose'],
+		logger: ['error', 'warn', 'debug', 'verbose']
 	});
 	const configService = app.get(DynamicConfigService);
 	const rmqService = app.get<RmqService>(RmqService);
@@ -45,8 +41,8 @@ async function bootstrap() {
 		transport: Transport.TCP,
 		options: {
 			host: APP_SERTVICE_HOST,
-			port: APP_SERTVICE_PORT,
-		},
+			port: APP_SERTVICE_PORT
+		}
 	});
 	const swaggerConfigBuilder = new DocumentBuilder()
 		.setTitle(APP_NAME)
@@ -59,8 +55,8 @@ async function bootstrap() {
 		customSiteTitle: APP_NAME,
 		customfavIcon: APP_FAVICON,
 		swaggerOptions: {
-			persistAuthorization: true,
-		},
+			persistAuthorization: true
+		}
 	};
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup('/docs', app, document, customOptions);

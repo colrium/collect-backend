@@ -8,12 +8,12 @@ import { MongoBaseDocument, MongoSchema } from '../../dynamic/mongo';
 export type TeamMemberDocument = TeamMember & Document;
 
 @MongoSchema({
-	collection: 'team.members',
+	collection: 'team.members'
 })
 export class TeamMember extends MongoBaseDocument {
 	@ApiProperty({
 		example: new Types.ObjectId().toString(),
-		description: "The teams's Id",
+		description: "The teams's Id"
 	})
 	@IsValidUUID()
 	@Prop({ type: String, required: true })
@@ -21,7 +21,7 @@ export class TeamMember extends MongoBaseDocument {
 
 	@ApiProperty({
 		example: new Types.ObjectId().toString(),
-		description: "The user's Id",
+		description: "The user's Id"
 	})
 	@IsString()
 	@IsValidUUID()
@@ -33,7 +33,7 @@ const ModelSchema = SchemaFactory.createForClass(TeamMember);
 
 ModelSchema.index({
 	name: 'text',
-	description: 'text',
+	description: 'text'
 });
 
 export { ModelSchema as TeamMemberSchema };

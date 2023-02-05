@@ -3,10 +3,10 @@ import { MessagingService } from './messaging.service';
 
 @Controller()
 export class MessagingController {
-  constructor(private readonly messagingService: MessagingService) {}
+	constructor(private readonly messagingService: MessagingService) {}
 
-  @Get()
-  getHello(): string {
-    return this.messagingService.getHello();
-  }
+	@Get()
+	getHello(): string {
+		return this.messagingService.getHello();
+	}
 }

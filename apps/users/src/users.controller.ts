@@ -1,36 +1,32 @@
 import {
-	UseGuards,
-	Req,
-	Query,
-	Param,
+	ClientAuthGuard,
+	PaginatedRequest,
+	PaginatedResponse,
+	ParseObjectIdPipe,
+	Role,
+	Roles
+} from '@app/common';
+import { User } from '@app/common/auth';
+import {
 	Body,
 	Controller,
 	Get,
+	Param,
+	Patch,
 	Post,
 	Put,
-	Patch,
-	SetMetadata,
+	Req,
+	UseGuards
 } from '@nestjs/common';
-import {
-	ApiTags,
-	ApiBearerAuth,
-	ApiResponse,
-	ApiOperation,
-	ApiSecurity,
-	ApiOkResponse,
-	ApiParam,
-} from '@nestjs/swagger';
 import { MessagePattern } from '@nestjs/microservices';
-import { ObjectId } from 'bson';
 import {
-	ParseObjectIdPipe,
-	PaginatedResponse,
-	Role,
-	Roles,
-	ClientAuthGuard,
-	PaginatedRequest,
-} from '@app/common';
-import { User } from '@app/common/auth';
+	ApiOkResponse,
+	ApiOperation,
+	ApiParam,
+	ApiSecurity,
+	ApiTags
+} from '@nestjs/swagger';
+import { ObjectId } from 'bson';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
@@ -45,17 +41,22 @@ export class UsersController {
 	@PaginatedRequest(User)
 	@Get()
 	async find(@Req() req) {
-		return await this.usersService.find({});
+		const records = await this.usersService.find({});
+		return records?.map((record) => {
+			return typeof record?.toJSON === 'function'
+				? record?.toJSON()
+				: record;
+		});
 	}
 
 	@ApiOkResponse({
 		description: 'The found record',
-		type: User,
+		type: User
 	})
 	@ApiParam({
 		name: 'id',
 		type: 'string',
-		description: 'Id of the user',
+		description: 'Id of the user'
 	})
 	@ApiOperation({ summary: 'Get a user by id', operationId: 'test' })
 	@Get('/:id')
@@ -64,7 +65,7 @@ export class UsersController {
 	}
 	@ApiOperation({
 		summary: 'Create a new user',
-		operationId: 'test',
+		operationId: 'test'
 	})
 	@Post()
 	async create(@Body() request: User) {
@@ -72,7 +73,7 @@ export class UsersController {
 	}
 	@ApiOperation({
 		summary: 'Partially Update a user by id',
-		operationId: 'test',
+		operationId: 'test'
 	})
 	@Patch('/:id')
 	async partialUpdate(@Body() data: Partial<User>) {

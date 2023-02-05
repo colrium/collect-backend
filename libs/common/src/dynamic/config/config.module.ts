@@ -1,4 +1,4 @@
-import { DynamicModule, Module, Provider } from "@nestjs/common"
+import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { DynamicConfigService } from './config.service';
 import { CONFIG_OPTIONS } from './constants';
 import { DynamicConfigOptions } from './interfaces';
@@ -11,26 +11,25 @@ export class DynamicConfigModule {
 			providers: [
 				{
 					provide: CONFIG_OPTIONS,
-					useValue: options,
+					useValue: options
 				},
-				DynamicConfigService,
+				DynamicConfigService
 			],
-			exports: [DynamicConfigService],
+			exports: [DynamicConfigService]
 		};
 	}
 
 	static forRoot(options: DynamicConfigOptions): DynamicModule {
-
 		return {
 			module: DynamicConfigModule,
 			providers: [
 				{
 					provide: CONFIG_OPTIONS,
-					useValue: options,
+					useValue: options
 				},
-				DynamicConfigService,
+				DynamicConfigService
 			],
-			exports: [DynamicConfigService],
+			exports: [DynamicConfigService]
 		};
 	}
 }

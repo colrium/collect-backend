@@ -8,12 +8,12 @@ import { MongoBaseDocument, MongoSchema } from '../../dynamic/mongo';
 export type UserPasswordCodeDocument = UserPasswordCode & Document;
 
 @MongoSchema({
-	collection: 'user.password.reset.code',
+	collection: 'user.password.reset.code'
 })
 export class UserPasswordCode extends MongoBaseDocument {
 	@ApiProperty({
 		example: uuidv4(),
-		description: "The user's Id",
+		description: "The user's Id"
 	})
 	@IsString()
 	@IsValidUUID()
@@ -21,7 +21,7 @@ export class UserPasswordCode extends MongoBaseDocument {
 	userId: string;
 	@ApiProperty({
 		example: uuidv4(),
-		description: "The teams's Id",
+		description: "The teams's Id"
 	})
 	@Prop({ type: String, required: true })
 	code: string;
@@ -34,7 +34,7 @@ const ModelSchema = SchemaFactory.createForClass(UserPasswordCode);
 
 ModelSchema.index({
 	name: 'text',
-	description: 'text',
+	description: 'text'
 });
 
 export { ModelSchema as UserPasswordCodeSchema };

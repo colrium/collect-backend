@@ -12,7 +12,7 @@ import {
 	DatabaseModule,
 	JwtStrategy,
 	DynamicConfigModule,
-	DynamicConfigService,
+	DynamicConfigService
 } from '@app/common';
 
 @Module({
@@ -22,9 +22,9 @@ import {
 			isGlobal: true,
 			validationSchema: Joi.object({
 				SERVICE_USERS_PORT: Joi.number().required(),
-				SERVICE_USERS_HOST: Joi.string().required(),
+				SERVICE_USERS_HOST: Joi.string().required()
 			}),
-			folder: '.',
+			folder: '.'
 		}),
 		ClientsModule.registerAsync([
 			{
@@ -34,27 +34,27 @@ import {
 						isGlobal: true,
 						validationSchema: Joi.object({
 							SERVICE_AUTH_PORT: Joi.number().required(),
-							SERVICE_AUTH_HOST: Joi.string().required(),
+							SERVICE_AUTH_HOST: Joi.string().required()
 						}),
-						folder: '.',
-					}),
+						folder: '.'
+					})
 				],
 				useFactory: async (configService: DynamicConfigService) => ({
 					transport: Transport.TCP,
 					options: {
 						host: configService.get('SERVICE_AUTH_HOST'),
-						port: configService.get('SERVICE_AUTH_PORT'),
-					},
+						port: configService.get('SERVICE_AUTH_PORT')
+					}
 				}),
-				inject: [DynamicConfigService],
-			},
+				inject: [DynamicConfigService]
+			}
 		]),
 		DatabaseModule,
 		RmqModule,
-		AuthLibModule,
+		AuthLibModule
 	],
 	controllers: [UsersController],
 	providers: [UsersService, UsersRepository],
-	exports: [UsersService],
+	exports: [UsersService]
 })
 export class UsersModule {}

@@ -71,7 +71,7 @@ export class AuthService {
 		);
 		const secret = this.configService.get('JWT_SECRET');
 		const tokenPayload: TokenPayload = {
-			sub: user.id,
+			sub: user.email || user.phoneNumber,
 			name: user.fullName,
 			admin: Array.isArray(user.roles) && user.roles.includes(Role.ADMIN),
 			iat: Date.now()
@@ -136,7 +136,14 @@ export class AuthService {
 		const decodedToken = this.jwtService.decode(jwt);
 		const { sub } = decodedToken;
 		const user = await this.userRepository.findOne({
-			id: sub
+			$or: [
+				{
+					email: sub
+				},
+				{
+					phoneNumber: sub
+				}
+			]
 		});
 		return user;
 	}
@@ -145,10 +152,7 @@ export class AuthService {
 		return await this.userRepository.findOne(filterQuery);
 	}
 
-	async find(filterQuery: FilterQuery<User>) {
-		return await this.userRepository.findOne(filterQuery);
-	}
-	onModuleInit() {
-		this.logger.log(`The module has been initialized.`);
+	async find(filterQuery: FilterQuery<User>): Promise<Document[]> {
+		return await this.userRepository.find(filterQuery);
 	}
 }

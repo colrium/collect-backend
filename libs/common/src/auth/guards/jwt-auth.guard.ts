@@ -1,6 +1,12 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common"
-import { ClientProxy } from "@nestjs/microservices"
-import { catchError, Observable, tap } from "rxjs"
+import {
+	CanActivate,
+	ExecutionContext,
+	Inject,
+	Injectable,
+	UnauthorizedException
+} from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { catchError, Observable, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -12,9 +18,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
 	// 	console.log('authClient', authClient);
 	// }
 
-	constructor(
-		private readonly authService: AuthService
-	) {
+	constructor(private readonly authService: AuthService) {
 		super();
 		console.log('authService', authService);
 	}
@@ -29,7 +33,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
 				? authorizationArr[1]
 				: authorizationArr[0];
 		console.log('jwt', jwt);
-		const jwtValid =  this.authService.validateJwt(jwt);
+		const jwtValid = this.authService.validateJwt(jwt);
 
 		return true;
 		// if (this.authClient) {

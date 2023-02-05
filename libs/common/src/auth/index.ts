@@ -10,4 +10,3 @@ export * from './types';
 export * from './user.password.repository';
 export * from './user.repository';
 export * from './user.role.repository';
-

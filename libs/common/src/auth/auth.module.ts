@@ -15,14 +15,14 @@ import { UserRepository } from './user.repository';
 		DynamicConfigModule.forRoot({
 			validationSchema: Joi.object({
 				JWT_SECRET: Joi.string().required(),
-				JWT_EXPIRATION: Joi.string().required(),
+				JWT_EXPIRATION: Joi.string().required()
 			}),
-			folder: '.',
+			folder: '.'
 		}),
 		DatabaseModule,
 		MongooseModule.forFeature([
 			{ name: User.name, schema: UserSchema },
-			{ name: UserPassword.name, schema: UserPasswordSchema },
+			{ name: UserPassword.name, schema: UserPasswordSchema }
 		]),
 		RmqModule.register({ name: 'AUTH' }),
 		JwtModule.registerAsync({
@@ -30,10 +30,10 @@ import { UserRepository } from './user.repository';
 				DynamicConfigModule.forRoot({
 					validationSchema: Joi.object({
 						JWT_SECRET: Joi.string().required(),
-						JWT_EXPIRATION: Joi.string().required(),
+						JWT_EXPIRATION: Joi.string().required()
 					}),
-					folder: '.',
-				}),
+					folder: '.'
+				})
 			],
 			useFactory: (configService: DynamicConfigService) => {
 				const jwtSecret = configService.get('JWT_SECRET');
@@ -41,19 +41,19 @@ import { UserRepository } from './user.repository';
 				return {
 					secret: jwtSecret,
 					signOptions: {
-						expiresIn: `${jwtExpiration}s`,
-					},
+						expiresIn: `${jwtExpiration}s`
+					}
 				};
 			},
-			inject: [DynamicConfigService],
-		}),
+			inject: [DynamicConfigService]
+		})
 	],
 	exports: [
 		RmqModule,
 		JwtService,
 		UserRepository,
 		UserPasswordRepository,
-		AuthService,
+		AuthService
 	],
 	providers: [
 		AuthService,
@@ -61,7 +61,7 @@ import { UserRepository } from './user.repository';
 		LocalStrategy,
 		JwtStrategy,
 		UserRepository,
-		UserPasswordRepository,
-	],
+		UserPasswordRepository
+	]
 })
 export class AuthModule {}

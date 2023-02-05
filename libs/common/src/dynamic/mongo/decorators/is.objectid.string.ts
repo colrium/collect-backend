@@ -1,7 +1,7 @@
 import {
 	registerDecorator,
 	ValidationArguments,
-	ValidationOptions,
+	ValidationOptions
 } from 'class-validator';
 import { Types } from 'mongoose';
 
@@ -17,8 +17,8 @@ export const IsObjectIdString = (
 			validator: {
 				validate(value: any, args: ValidationArguments) {
 					return Types.ObjectId.isValid(value);
-				},
-			},
+				}
+			}
 		});
 	};
 };

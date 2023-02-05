@@ -9,9 +9,9 @@ export class TeamRepository extends DynamicMongoRepository<Team> {
 	protected readonly logger = new Logger(TeamRepository.name);
 
 	constructor(
-		@InjectModel(Team.name) userModel: Model<Team>,
+		@InjectModel(Team.name) model: Model<Team>,
 		@InjectConnection() connection: Connection
 	) {
-		super(userModel, connection);
+		super(model, connection);
 	}
 }

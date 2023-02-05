@@ -1,7 +1,7 @@
 import {
 	registerDecorator,
 	ValidationArguments,
-	ValidationOptions,
+	ValidationOptions
 } from 'class-validator';
 import uuid from 'uuid';
 
@@ -20,8 +20,8 @@ export const IsValidUUID = (
 					return (
 						uuid.validate(value) && uuid.version(value) === version
 					);
-				},
-			},
+				}
+			}
 		});
 	};
 };

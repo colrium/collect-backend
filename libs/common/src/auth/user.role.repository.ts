@@ -9,9 +9,9 @@ export class UserRoleRepository extends DynamicMongoRepository<UserRole> {
 	protected readonly logger = new Logger(UserRoleRepository.name);
 
 	constructor(
-		@InjectModel(UserRole.name) userModel: Model<UserRole>,
+		@InjectModel(UserRole.name) model: Model<UserRole>,
 		@InjectConnection() connection: Connection
 	) {
-		super(userModel, connection);
+		super(model, connection);
 	}
 }

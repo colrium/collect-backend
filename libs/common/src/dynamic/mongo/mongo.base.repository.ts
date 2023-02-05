@@ -66,7 +66,6 @@ export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 			filterQuery,
 			update,
 			{
-				lean: true,
 				new: true
 			}
 		);
@@ -87,14 +86,13 @@ export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 		document: Partial<TDocument>
 	) {
 		return this._model.findOneAndUpdate(filterQuery, document, {
-			lean: true,
 			upsert: true,
 			new: true
 		});
 	}
 
-	async find(filterQuery: FilterQuery<TDocument>) {
-		return this._model.find(filterQuery, {}, { lean: true });
+	async find(filterQuery: FilterQuery<TDocument>): Promise<Document[]> {
+		return await this._model.find(filterQuery);
 	}
 
 	async startTransaction() {

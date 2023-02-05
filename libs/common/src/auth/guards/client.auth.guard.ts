@@ -1,22 +1,9 @@
-import {
-	CanActivate,
-	ExecutionContext,
-	Inject,
-	Injectable,
-	Logger,
-	UnauthorizedException,
-	HttpException,
-	HttpStatus,
-	mixin,
-	Type
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Inject, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Socket } from 'socket.io';
 import { ClientProxy } from '@nestjs/microservices';
 import { timeout } from 'rxjs/operators';
-import { catchError, Observable, tap } from 'rxjs';
+import { Socket } from 'socket.io';
 import { Role } from '../types';
-
 
 export class ClientAuthGuard implements CanActivate {
 	private logger = new Logger(ClientAuthGuard.name);
@@ -24,25 +11,23 @@ export class ClientAuthGuard implements CanActivate {
 		@Inject('AUTH_CLIENT')
 		private readonly client: ClientProxy,
 		private reflector: Reflector
-	) {
-		this.logger.verbose(`reflector: ${JSON.stringify(reflector)}`);
-	}
+	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const roles = this.reflector.get<Role[]>('roles', context.getHandler());
-
 		const jwt = this.getContextAuthorizaionJwt(context);
-		this.logger.verbose(`roles from reflector: ${JSON.stringify(roles)}`);
-		this.logger.verbose(`jwt ${jwt}`);
+
+		if (!jwt) {
+			return false;
+		}
 		try {
 			const user = await this.client
-				.send({ role: 'jwt-auth', cmd: 'user'}, { jwt: jwt })
+				.send({ role: 'jwt-auth', cmd: 'user' }, { jwt: jwt })
 				.pipe(timeout(3000))
 				.toPromise();
-			this.logger.verbose(`user: ${JSON.stringify(user)}`);
 			if (!!user) {
 				if (roles?.length > 0) {
-					let rolesCanActivate =
+					const rolesCanActivate =
 						Array.isArray(user?.roles) &&
 						roles.some((role) => user?.roles?.indexOf(role) !== -1);
 					if (!rolesCanActivate) {

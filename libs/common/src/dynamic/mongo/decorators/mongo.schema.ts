@@ -7,9 +7,11 @@ export interface MongoSchemaOptions {
 	toObject?: any;
 	versionKey?: boolean;
 	collection?: string;
+	removePrivatePaths?: boolean;
 }
 const defaultOptions: MongoSchemaOptions = {
-	_id: false,
+	// _id: false,
+	removePrivatePaths: true,
 	toJSON: {
 		virtuals: true,
 		getters: true

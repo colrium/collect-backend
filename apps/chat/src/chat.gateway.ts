@@ -4,7 +4,7 @@ import {
 	WsResponse,
 	WebSocketServer,
 	OnGatewayConnection,
-	OnGatewayDisconnect,
+	OnGatewayDisconnect
 } from '@nestjs/websockets';
 import { Observable } from 'rxjs';
 
@@ -46,7 +46,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (userPos > -1) {
 			this.connectedUsers = [
 				...this.connectedUsers.slice(0, userPos),
-				...this.connectedUsers.slice(userPos + 1),
+				...this.connectedUsers.slice(userPos + 1)
 			];
 		}
 
@@ -56,7 +56,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('message')
 	async onMessage(client, data: any) {
-		const event: string = 'message';
+		const event = 'message';
 		const result = data[0];
 
 		await this.roomService.addMessage(result.message, result.room);
