@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  cbe-rabbitmq:
+    image: rabbitmq
+    container_name: cbe-rabbitmq
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    ports:
+      - '5672:5672'
+networks:
+  default:
+    external:
+      name: cbe-app-tier

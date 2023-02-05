@@ -6,10 +6,9 @@
 	"semi": true,
 	"proseWrap": "preserve",
 	"insertPragma": false,
-	"trailingComma": "es5",
+	"trailingComma": "none",
 	"bracketSameLine": false,
 	"endOfLine": "lf",
 	"quoteProps": "as-needed",
-	"jsxBracketSameLine": false,
-	"printWidth": 80
+	"jsxBracketSameLine": false
 }

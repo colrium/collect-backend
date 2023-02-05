@@ -10,27 +10,23 @@ export class DynamicConfigService {
 	private readonly envConfig: DynamicEnvConfig;
 
 	constructor(@Inject(CONFIG_OPTIONS) options: DynamicConfigOptions) {
-		const filePath = `${process.env.NODE_ENV || 'development'}.env`;
-		const envFile = path.resolve(
-			__dirname,
-			'../../',
-			options.folder,
-			filePath
-		);
-		// console.log(`process.env `, JSON.stringify(process.env));
 
-		if (fs.existsSync(envFile)) {
-			console.log(`envFile`, JSON.stringify(envFile));
-			this.envConfig = dotenv.parse(fs.readFileSync(envFile));
-		}
-		else {
-			const result = dotenv.config();
-			if (!result.error) {
-				this.envConfig = result.parsed;
+			const filePath = `${process.env.NODE_ENV || 'development'}.env`;
+			const envFile = path.resolve(
+				__dirname,
+				'../../../',
+				options.folder,
+				filePath
+			);
+			if (fs.existsSync(envFile)) {
+				const envFileContent = fs.readFileSync(envFile)
+				this.envConfig = dotenv.parse(envFileContent);
+			} else {
+				const result = dotenv.config();
+				if (!result.error) {
+					this.envConfig = result.parsed;
+				}
 			}
-			console.log(`dotenv.config() result`, JSON.stringify(result));
-		}
-		console.log(`this.envConfig `, JSON.stringify(this.envConfig));
 	}
 
 	get(key: string, defaultValue: any = null): any {

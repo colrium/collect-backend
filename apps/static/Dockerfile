@@ -8,7 +8,7 @@ RUN yarn install
 
 COPY . .
 
-RUN npm run build auth
+RUN npm run build static
 
 FROM node:alpine as production
 
@@ -21,7 +21,7 @@ COPY package*.json yarn.lock* ./
 
 RUN yarn install --production
 
-COPY . .
+COPY ../ .
 
 COPY --from=development /usr/src/app/dist ./dist
 

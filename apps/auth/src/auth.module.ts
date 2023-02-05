@@ -1,63 +1,52 @@
 import { Module, Logger } from '@nestjs/common';
 import { JwtModule } from "@nestjs/jwt"
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import {
+	AuthModule as AuthLibModule,
+	AuthService,
 	RmqModule,
 	DatabaseModule,
-	DynamicMongoModelModule,
 	DynamicConfigModule,
-	DynamicConfigService
+	DynamicConfigService,
+	LocalStrategy,
+	JwtStrategy,
 } from '@app/common';
-import { message } from "@app/common"
+import { JwtService } from '@nestjs/jwt';
 import * as Joi from "joi"
 import { AuthController } from "./auth.controller"
-import { AuthService } from "./auth.service"
-import { JwtStrategy } from "./strategies/jwt.strategy"
-import { LocalStrategy } from "./strategies/local.strategy"
-import { UsersModule } from "./users/users.module"
 
 @Module({
 	imports: [
-		// DynamicMongoModelModule.forRoot(message),
-		DynamicConfigModule.forRoot({
-			isGlobal: true,
-			validationSchema: Joi.object({
-				JWT_SECRET: Joi.string().required(),
-				JWT_EXPIRATION: Joi.string().required(),
-				MONGODB_URI: Joi.string().required(),
-			}),
-			folder: './apps/auth',
-		}),
-		UsersModule,
 		RmqModule,
 		DatabaseModule,
-		JwtModule.registerAsync({
-			imports: [
-				DynamicConfigModule.forRoot({
-					isGlobal: true,
-					validationSchema: Joi.object({
-						JWT_SECRET: Joi.string().required(),
-						JWT_EXPIRATION: Joi.string().required(),
-						MONGODB_URI: Joi.string().required(),
-					}),
-					folder: '.',
-				}),
-			],
-			useFactory: (configService: DynamicConfigService) => {
-				const logger = new Logger('DynamicConfigService JwtModule');
-				const jwtSecret = configService.get('JWT_SECRET');
-				const jwtExpiration = configService.get('JWT_EXPIRATION', 3600);
-				logger.verbose(`jwtSecret ${jwtSecret}`);
-				return {
-					secret: jwtSecret,
-					signOptions: {
-						expiresIn: `${jwtExpiration}s`,
-					},
-				};
-			},
-			inject: [DynamicConfigService],
+		DynamicConfigModule.forRoot({
+			folder: '.',
 		}),
+		ClientsModule.registerAsync([
+			{
+				name: 'USER_CLIENT',
+				imports: [
+					DynamicConfigModule.forRoot({
+						validationSchema: Joi.object({
+							SERVICE_USER_PORT: Joi.number().required(),
+							SERVICE_USER_HOST: Joi.string().required(),
+						}),
+						folder: '.',
+					}),
+				],
+				useFactory: async (configService: DynamicConfigService) => ({
+					transport: Transport.TCP,
+					options: {
+						host: configService.get('SERVICE_USER_HOST'),
+						port: configService.get('SERVICE_USER_PORT'),
+					},
+				}),
+				inject: [DynamicConfigService],
+			},
+		]),
+		AuthLibModule,
 	],
 	controllers: [AuthController],
-	providers: [AuthService, LocalStrategy, JwtStrategy],
+	providers: [AuthService, JwtService],
 })
 export class AuthModule {}

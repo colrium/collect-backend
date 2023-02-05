@@ -1,8 +1,8 @@
-import { Module, Logger } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
-import { MongooseModule } from "@nestjs/mongoose"
-import { toJSON as toJSONPlugin } from "./tojson.plugin"
 import { DynamicConfigModule, DynamicConfigService } from '../dynamic';
+import { toJSON as toJSONPlugin } from './tojson.plugin';
 @Module({
 	imports: [
 		DynamicConfigModule.register({

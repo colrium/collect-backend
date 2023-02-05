@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  cbe-mongodb:
+    image: bitnami/mongodb:latest
+    container_name: cbe-mongodb
+    restart: unless-stopped
+    environment:
+      MONGODB_ADVERTISED_HOSTNAME: cbe-mongodb
+      MONGODB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      MONGODB_DATABASE: ${MONGODB_DATABASE}
+    volumes:
+      - 'cbe_mongodb_data:/bitnami/mongodb'
+    ports:
+      - '8061:27017'
+
+  cbe-mongodb-client:
+    image: mongoclient/mongoclient
+    container_name: cbe-mongodb-client
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges
+    ports:
+      - 8060:3000
+    depends_on:
+      - cbe-mongodb
+
+volumes:
+  cbe_mongodb_data:
+    driver: local
+
+networks:
+  default:
+    name: cbe-db

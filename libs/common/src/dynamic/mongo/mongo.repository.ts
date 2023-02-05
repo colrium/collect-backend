@@ -1,14 +1,19 @@
-import { Injectable, Logger } from "@nestjs/common"
-import { InjectConnection, InjectModel } from "@nestjs/mongoose"
-import { Model, Connection } from "mongoose"
-import { DynamicMongoBaseRepository } from "./mongo.base.repository"
-import { MongoDocument } from './mongo.document';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model } from 'mongoose';
+import { MongoBaseDocument } from './mongo.base.document';
+import { MongoBaseRepository } from './mongo.base.repository';
 
 @Injectable()
-export class DynamicMongoRepository extends DynamicMongoBaseRepository<TDocument extends MongoDocument> {
-	protected readonly logger = new Logger(TDocument.name)
+export class DynamicMongoRepository<
+	TDocument extends MongoBaseDocument
+> extends MongoBaseRepository<TDocument> {
+	protected readonly logger = new Logger('DynamicMongoRepository');
 
-	constructor(@InjectModel(TDocument.name) model: Model<TDocument>, @InjectConnection() connection: Connection) {
-		super(model, connection)
+	constructor(
+		@InjectModel('model') model: Model<TDocument>,
+		@InjectConnection() connection: Connection
+	) {
+		super(model, connection);
 	}
 }

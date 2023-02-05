@@ -1,22 +1,30 @@
-import { Logger, NotFoundException } from "@nestjs/common"
-import { FilterQuery, Model, Types, UpdateQuery, SaveOptions, Connection } from "mongoose"
-import { MongoDocument } from "./mongo.document"
+import { Logger, NotFoundException } from '@nestjs/common';
+import {
+	FilterQuery,
+	Model,
+	Types,
+	UpdateQuery,
+	SaveOptions,
+	Connection,
+} from 'mongoose';
+import { MongoBaseDocument } from './mongo.base.document';
 
-export abstract class MongoBaseRepository<TDocument extends MongoDocument> {
-	protected readonly logger = new Logger(TDocument.name)
+export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
+	protected readonly logger = new Logger('MongoBaseRepository');
 
 	constructor(
 		protected readonly _model: Model<TDocument>,
 		private readonly connection: Connection
-	) {
-
-	}
+	) {}
 
 	get model() {
-		return this._model
+		return this._model;
 	}
 
-	async validate(document: TDocument, options: SaveOptions = {}): Promise<boolean>{
+	async validate(
+		document: TDocument,
+		options: SaveOptions = {}
+	): Promise<boolean> {
 		return true;
 	}
 

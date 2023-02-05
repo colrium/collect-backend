@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException, UnprocessableEntityException } from "@nestjs/common"
-import { FilterQuery } from "mongoose"
-import { MongoDocument } from './mongo.document';
-import {DynamicMongoRepository} from './mongo._repository'
-
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, FilterQuery, Model } from 'mongoose';
+import { MongoBaseDocument } from './mongo.base.document';
+import { DynamicMongoRepository } from './mongo.repository';
 @Injectable()
-export class DynamicMongoCrudService<TDocument extends MongoDocument> {
+export class DynamicMongoCrudService<TDocument extends MongoBaseDocument> {
+	private _repository: any;
 	constructor(
-		@InjectModel(TDocument.name) model: Model<TDocument>,
+		@InjectModel('model') model: Model<TDocument>,
 		@InjectConnection() connection: Connection
 	) {
 		this._repository = new DynamicMongoRepository(model, connection);
@@ -23,7 +24,7 @@ export class DynamicMongoCrudService<TDocument extends MongoDocument> {
 		try {
 			valid = await this._repository.validate(data);
 		} catch (err) {
-			throw new UnprocessableEntityException(err);;
+			throw new UnprocessableEntityException(err);
 		}
 		if (!valid) {
 			throw new UnprocessableEntityException('Unprocessable Entity');
