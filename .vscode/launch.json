@@ -6,16 +6,94 @@
 	"configurations": [
 		{
 			"type": "node",
-			"request": "attach",
-			"name": "Auth app",
-			"port": 9229,
+			"request": "launch",
+			"name": "Auth Application",
+			"runtimeExecutable": "yarn",
+			"runtimeArgs": ["start", "auth", "--", "--debug", "9221", "--watch", "--inspect-brk"],
+			"console": "integratedTerminal",
 			"restart": true,
-			"preLaunchTask": "start:debug:auth",
-			"postDebugTask": "stop:bg:all",
-			"skipFiles": [
-				"<node_internals>/**/*.js",
-				"${workspaceRoot}/node_modules/**/*.js"
-			]
+			"autoAttachChildProcesses": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Chat Application",
+			"runtimeExecutable": "yarn",
+			"runtimeArgs": [
+				"start",
+				"chat",
+				"--",
+				"--debug",
+				"9222",
+				"--watch",
+				"--inspect-brk"
+			],
+			"console": "integratedTerminal",
+			"restart": true,
+			"autoAttachChildProcesses": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Gateway Application",
+			"runtimeExecutable": "yarn",
+			"runtimeArgs": [
+				"start",
+				"gateway",
+				"--",
+				"--debug",
+				"9223",
+				"--watch",
+				"--inspect-brk"
+			],
+			"console": "integratedTerminal",
+			"restart": true,
+			"autoAttachChildProcesses": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Users Application",
+			"runtimeExecutable": "yarn",
+			"runtimeArgs": [
+				"start",
+				"users",
+				"--",
+				"--debug",
+				"9224",
+				"--watch",
+				"--inspect-brk"
+			],
+			"console": "integratedTerminal",
+			"restart": true,
+			"autoAttachChildProcesses": true
 		}
+		// {
+		// 	"type": "node",
+		// 	"request": "attach",
+		// 	"name": "Auth Attach",
+		// 	"port": 9227,
+		// 	"restart": true,
+		// 	"preLaunchTask": "Auth app",
+		// 	"postDebugTask": "Terminate all"
+		// },
+		// {
+		// 	"type": "node",
+		// 	"request": "attach",
+		// 	"name": "Users Attach",
+		// 	"port": 9228,
+		// 	"restart": true,
+		// 	"preLaunchTask": "Users app",
+		// 	"postDebugTask": "Terminate all"
+		// },
+		// {
+		// 	"type": "node",
+		// 	"request": "attach",
+		// 	"name": "Gateway Attach",
+		// 	"port": 9229,
+		// 	"restart": true,
+		// 	"preLaunchTask": "Gateway app",
+		// 	"postDebugTask": "Terminate all"
+		// }
 	]
 }

@@ -45,24 +45,6 @@
         "tsConfigPath": "apps/gateway/tsconfig.app.json"
       }
     },
-    "messaging": {
-      "type": "application",
-      "root": "apps/messaging",
-      "entryFile": "main",
-      "sourceRoot": "apps/messaging/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/messaging/tsconfig.app.json"
-      }
-    },
-    "analytics": {
-      "type": "application",
-      "root": "apps/analytics",
-      "entryFile": "main",
-      "sourceRoot": "apps/analytics/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/analytics/tsconfig.app.json"
-      }
-    },
     "chat": {
       "type": "application",
       "root": "apps/chat",

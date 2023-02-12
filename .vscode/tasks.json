@@ -3,8 +3,8 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"command": "yarn start:debug auth",
-			"label": "start:debug:auth",
+			"command": "yarn start:debug auth ",
+			"label": "Auth app",
 			"isBackground": true,
 			"problemMatcher": [
 				{
@@ -32,7 +32,67 @@
 			}
 		},
 		{
-			"label": "stop:bg:all",
+			"type": "shell",
+			"command": "yarn start:debug users",
+			"label": "Users app",
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"pattern": [
+						{
+							"regexp": ".",
+							"file": 1,
+							"location": 2,
+							"message": 3
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".",
+						"endsPattern": "."
+					}
+				}
+			],
+			"presentation": {
+				"reveal": "silent",
+				"close": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"type": "shell",
+			"command": "yarn start:debug gateway",
+			"label": "Gateway app",
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"pattern": [
+						{
+							"regexp": ".",
+							"file": 1,
+							"location": 2,
+							"message": 3
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".",
+						"endsPattern": "."
+					}
+				}
+			],
+			"presentation": {
+				"reveal": "silent",
+				"close": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"label": "Terminate all",
 			"command": "echo ${input:terminate}",
 			"type": "shell"
 		}

@@ -28,9 +28,8 @@ async function bootstrap() {
 		'USERS_APP_DESCRIPTION',
 		'Collect Users Application'
 	);
-	const APP_VERSION = configService.get('USERS_APP_VERSION', '1.0.0');
+	const APP_VERSION = configService.get('USERS_APP_VERSION', '0.0.1');
 	const PORT = configService.get('USERS_APP_PORT', 8083);
-	logger.verbose(`APP_FAVICON ${APP_FAVICON}`);
 	app.use(helmet());
 	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));

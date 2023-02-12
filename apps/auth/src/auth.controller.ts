@@ -165,18 +165,18 @@ export class AuthController implements OnModuleInit {
 		return user;
 	}
 
-	@MessagePattern({ role: 'jwt-auth', cmd: 'user' })
-	async getJwtUser(data) {
+	@MessagePattern({ role: 'jwt-auth', cmd: 'get-user' })
+	async getJwtUser(jwt: string): Promise<User> {
 		try {
-			const jwtValid = this.authService.validateJwt(data.jwt);
+			const jwtValid = this.authService.validateJwt(jwt);
 			if (jwtValid) {
-				return await this.authService.getJwtUser(data.jwt);
+				return await this.authService.getJwtUser(jwt);
 			} else {
-				return false;
+				return;
 			}
 		} catch (err) {
 			this.logger.error(`jwtValid ${JSON.stringify(err)}`);
-			return false;
+			return;
 		}
 	}
 }
