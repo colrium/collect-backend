@@ -1,12 +1,21 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-
+# Collect Backend
 ## Description
 
 Collect Backend Microservices built on the [Nest](https://github.com/nestjs/nest) framework.
 
+## Prerequisites
+Create Database and user
+```bash
+$ mongod
+```
+
+```bash
+$ use collect
+```
+
+```bash
+$ db.createUser({ user: "collect", pwd: "password123", roles:[{ role: "dbAdmin" , db:"collect"}]})
+```
 ## Installation
 
 ```bash

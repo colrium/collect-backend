@@ -19,13 +19,23 @@ async function bootstrap() {
 	const configService = app.get(DynamicConfigService);
 	const rmqService = app.get<RmqService>(RmqService);
 
+	const PROJECT_NAME = configService.get('PROJECT_NAME', 'CBE');
+	const PROJECT_DESCIPTION = configService.get('PROJECT_DESCIPTION');
+
+	const APP_FAVICON = configService.get('FAVICON');
+	const APP_NAME = configService.get(
+		'AUTH_APP_NAME',
+		`${PROJECT_NAME || ''} | Auth`
+	);
+	const APP_DESCRIPTION = configService.get(
+		'AUTH_APP_DESCRIPTION',
+		`${PROJECT_DESCIPTION || ''} Authentication and Authorization Service`
+	);
+	const APP_VERSION = configService.get('VERSION', '0.0.1');
+
 	const APP_SERTVICE_HOST = configService.get('SERVICE_AUTH_HOST');
 	const APP_SERTVICE_PORT = configService.get('SERVICE_AUTH_PORT');
 
-	const APP_FAVICON = configService.get('APPS_FAVICON');
-	const APP_NAME = configService.get('APP_AUTH_NAME');
-	const APP_DESCRIPTION = configService.get('APP_AUTH_DESCRIPTION');
-	const APP_VERSION = configService.get('APP_AUTH_VERSION');
 	const PORT = configService.get('APP_AUTH_PORT', 8081);
 
 	app.use(helmet());

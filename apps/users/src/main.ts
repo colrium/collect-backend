@@ -19,16 +19,21 @@ async function bootstrap() {
 	const configService = app.get(DynamicConfigService);
 	const rmqService = app.get<RmqService>(RmqService);
 
+	const PROJECT_NAME = configService.get('PROJECT_NAME', 'CBE');
+	const PROJECT_DESCIPTION = configService.get('PROJECT_DESCIPTION');
 	const APP_SERTVICE_HOST = configService.get('USERS_SERVICE_HOST');
 	const APP_SERTVICE_PORT = configService.get('USERS_SERVICE_PORT', 8084);
 
-	const APP_FAVICON = configService.get('APPS_FAVICON');
-	const APP_NAME = configService.get('USERS_APP_NAME', 'CBE Users');
+	const APP_FAVICON = configService.get('FAVICON');
+	const APP_NAME = configService.get(
+		'USERS_APP_NAME',
+		`${PROJECT_NAME || ''} | Users`
+	);
 	const APP_DESCRIPTION = configService.get(
 		'USERS_APP_DESCRIPTION',
-		'Collect Users Application'
+		`${PROJECT_DESCIPTION || ''} Users Service`
 	);
-	const APP_VERSION = configService.get('USERS_APP_VERSION', '0.0.1');
+	const APP_VERSION = configService.get('VERSION', '0.0.1');
 	const PORT = configService.get('USERS_APP_PORT', 8083);
 	app.use(helmet());
 	// app.use(csurf())

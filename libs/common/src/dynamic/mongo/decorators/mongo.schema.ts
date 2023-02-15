@@ -3,6 +3,7 @@ import { Schema } from '@nestjs/mongoose';
 
 export interface MongoSchemaOptions {
 	_id?: boolean;
+	timestamps?: boolean;
 	toJSON?: any;
 	toObject?: any;
 	versionKey?: boolean;
@@ -11,6 +12,7 @@ export interface MongoSchemaOptions {
 }
 const defaultOptions: MongoSchemaOptions = {
 	// _id: false,
+	timestamps: false,
 	removePrivatePaths: true,
 	toJSON: {
 		virtuals: true,

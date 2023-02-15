@@ -80,15 +80,4 @@ ModelSchema.virtual('fullName').get(function (this: UserDocument) {
 	return `${this.firstName} ${this.lastName}`;
 });
 
-// ModelSchema.pre('save', async function (this: User, next) {
-// 	if (!/\$2[aby]?\$\d{1,2}\$[.\/A-Za-z0-9]{53}/.test(this.password)) {
-// 		this.password = /\$2[aby]?\$\d{1,2}\$[.\/A-Za-z0-9]{53}/.test(
-// 			this.password
-// 		)
-// 			? this.password
-// 			: await Cryptography.toHash(this.password);
-// 	}
-// 	next();
-// });
-
 export { ModelSchema as UserSchema };

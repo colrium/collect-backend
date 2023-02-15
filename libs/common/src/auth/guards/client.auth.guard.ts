@@ -22,7 +22,7 @@ export class ClientAuthGuard implements CanActivate {
 		}
 		try {
 			const user = await this.client
-				.send({ role: 'jwt-auth', cmd: 'get-user' }, { jwt: jwt })
+				.send({ role: 'jwt-auth', cmd: 'get-user' }, jwt)
 				.pipe(timeout(3000))
 				.toPromise();
 			if (!!user) {

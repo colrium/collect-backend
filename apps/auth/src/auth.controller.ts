@@ -64,7 +64,6 @@ export class AuthController implements OnModuleInit {
 			Authorization: {
 				description: 'JWT Token',
 				example: 'Bearer <token>'
-				// type: "string",
 			}
 		}
 	})

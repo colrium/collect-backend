@@ -1,16 +1,11 @@
-import {
-	Injectable,
-	UnauthorizedException,
-	UnprocessableEntityException
-} from '@nestjs/common';
-import { FilterQuery } from 'mongoose';
-import { UsersRepository } from './users.repository';
+import { UserRepository } from '@app/common';
 import { User } from '@app/common/auth';
-import { Password } from '@app/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { FilterQuery } from 'mongoose';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly repository: UsersRepository) {}
+	constructor(private readonly repository: UserRepository) {}
 
 	async create(data: Omit<User, '_id'>) {
 		await this.validateCreate(data);

@@ -8,7 +8,7 @@ import {
 	UpdateQuery
 } from 'mongoose';
 import { MongoBaseDocument } from './mongo.base.document';
-
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 	protected readonly logger = new Logger('MongoBaseRepository');
 

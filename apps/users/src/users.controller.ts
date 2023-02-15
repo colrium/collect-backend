@@ -1,16 +1,11 @@
-import {
-	ClientAuthGuard,
-	PaginatedRequest,
-	PaginatedResponse,
-	ParseObjectIdPipe,
-	Role,
-	Roles
-} from '@app/common';
-import { User } from '@app/common/auth';
+import { ClientAuthGuard, ParseId, Role, Roles } from '@app/common';
+import { User, UserSchema } from '@app/common/auth';
+import { ApiMongoFilterQuery } from '@app/common/dynamic/mongo';
 import {
 	Body,
 	Controller,
 	Get,
+	Logger,
 	Param,
 	Patch,
 	Post,
@@ -26,7 +21,6 @@ import {
 	ApiSecurity,
 	ApiTags
 } from '@nestjs/swagger';
-import { ObjectId } from 'bson';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
@@ -35,18 +29,16 @@ import { UsersService } from './users.service';
 @Roles(Role.SUPER_ADMIN, Role.ADMIN)
 @UseGuards(ClientAuthGuard)
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	logger = new Logger(UsersController.name);
+	constructor(private readonly usersService: UsersService) {
+		this.logger.verbose('UserSchema', UserSchema);
+	}
 	@ApiOperation({ summary: 'Get users' })
-	@PaginatedResponse(User)
-	@PaginatedRequest(User)
+	// @PaginatedResponse(User)
+	@ApiMongoFilterQuery(User)
 	@Get()
 	async find(@Req() req) {
-		const records = await this.usersService.find({});
-		return records?.map((record) => {
-			return typeof record?.toJSON === 'function'
-				? record?.toJSON()
-				: record;
-		});
+		return await this.usersService.find({});
 	}
 
 	@ApiOkResponse({
@@ -60,8 +52,17 @@ export class UsersController {
 	})
 	@ApiOperation({ summary: 'Get a user by id', operationId: 'test' })
 	@Get('/:id')
-	async getById(@Param('id', ParseObjectIdPipe) id: ObjectId): Promise<User> {
-		return await this.usersService.findOne({ _id: id });
+	async getById(@Param('id', ParseId) id: any): Promise<User> {
+		return await this.usersService.findOne({
+			$or: [
+				{
+					_id: id
+				},
+				{
+					id: id
+				}
+			]
+		});
 	}
 	@ApiOperation({
 		summary: 'Create a new user',

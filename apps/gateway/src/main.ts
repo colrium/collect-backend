@@ -25,7 +25,7 @@ async function bootstrap() {
 	const APP_HOST = configService.get('USERS_GATEWAY_HOST');
 	const APP_PORT = configService.get('USERS_GATEWAY_PORT', 8086);
 
-	const APP_FAVICON = configService.get('APPS_FAVICON');
+	const APP_FAVICON = configService.get('FAVICON');
 	const APP_NAME = configService.get('GATEWAY_APP_NAME', 'CBE Gateway');
 	const APP_DESCRIPTION = configService.get(
 		'GATEWAY_APP_DESCRIPTION',

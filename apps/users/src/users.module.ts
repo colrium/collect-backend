@@ -1,19 +1,17 @@
-import { Module } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '@app/common/auth';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import * as Joi from 'joi';
 import {
 	AuthModule as AuthLibModule,
-	RmqModule,
 	DatabaseModule,
-	JwtStrategy,
 	DynamicConfigModule,
-	DynamicConfigService
+	DynamicConfigService,
+	RmqModule
 } from '@app/common';
+import { User, UserRepository, UserSchema } from '@app/common/auth';
+import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { MongooseModule } from '@nestjs/mongoose';
+import * as Joi from 'joi';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
 	imports: [
@@ -54,7 +52,7 @@ import {
 		AuthLibModule
 	],
 	controllers: [UsersController],
-	providers: [UsersService, UsersRepository],
+	providers: [UsersService, UserRepository],
 	exports: [UsersService]
 })
 export class UsersModule {}
