@@ -1,10 +1,7 @@
-import {
-	AuthenticatedSocket,
-	AuthService,
-	ClientAuthGuard,
-	User
-} from '@app/common/auth';
-import { OnModuleInit, UseGuards } from '@nestjs/common';
+import { AuthenticatedSocket, AuthService, User } from '@app/common/auth';
+import { Inject, Logger, OnModuleInit } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { ClientProxy } from '@nestjs/microservices';
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -15,16 +12,19 @@ import {
 import { Observable } from 'rxjs';
 
 @WebSocketGateway()
-@UseGuards(ClientAuthGuard)
+// @UseGuards(ClientAuthGuard)
 export class Gateway
 	implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit
 {
+	logger = new Logger(Gateway.name);
 	@WebSocketServer()
 	server;
 	connectedUsers: string[] = [];
-	constructor(private readonly authService: AuthService) {
-		// console.log(this.authService);
-		// this.server.use(this.middleware);
+	constructor(
+		private readonly authService: AuthService,
+		private eventEmmiter: EventEmitter2,
+		@Inject('MQTT_SERVICE') private mqttClient: ClientProxy
+	) {
 		this.middleware = this.middleware.bind(this);
 	}
 	onModuleInit() {
@@ -34,7 +34,11 @@ export class Gateway
 	async middleware(socket: AuthenticatedSocket, next) {
 		const { authorization: clientAuthorization } = socket.handshake.headers;
 		if (!clientAuthorization) {
-			return next(new Error('Not Authenticated. No cookies were sent'));
+			return next(
+				new Error(
+					'Not Authenticated. No authorization headers were sent'
+				)
+			);
 		}
 		const clientAuthorizationArr = clientAuthorization.split(' ');
 		const jwt = clientAuthorizationArr[clientAuthorizationArr.length - 1];
@@ -52,11 +56,10 @@ export class Gateway
 		// 	true
 		// );
 		const user: User = socket.user;
-		console.log('socket.user', socket.user);
-
 		this.connectedUsers = [...this.connectedUsers, String(user?.id)];
-		console.log('this.connectedUsers', this.connectedUsers);
+		// console.log('this.connectedUsers', this.connectedUsers);
 		// Send list of connected users
+		this.mqttClient.send('chat_channel', ['users', this.connectedUsers]);
 		this.server.emit('users', this.connectedUsers);
 	}
 
@@ -74,17 +77,27 @@ export class Gateway
 		// Sends the new list of connected users
 		this.server.emit('users', this.connectedUsers);
 	}
+	@OnEvent('message.send')
+	async onMessageEvent(data: any) {
+		const event = 'message';
+		console.log('this.onMessage this.mqttClient', this.mqttClient);
+		try {
+			this.mqttClient.send('chat_channel', data);
+		} catch (error) {
+			console.log('this.onMessage error', error);
+		}
+
+		this.server.emit('newMessage', data);
+		// return Observable.create((observer) =>
+		// 	observer.next({ event, data: data })
+		// );
+	}
 
 	@SubscribeMessage('message')
-	async onMessage(client, data: any) {
-		const event = 'message';
-		const result = data[0];
-		console.log('onMessage client.user', client.user);
-		// await this.roomService.addMessage(result.message, result.room);
-		// client.broadcast.to(result.room).emit(event, result.message);
-		this.server.emit('newMessage', data);
+	async onMessage(client: AuthenticatedSocket, data: any) {
+		this.eventEmmiter.emit('message.send', data);
 		return Observable.create((observer) =>
-			observer.next({ event, data: result.message })
+			observer.next({ event: "message", data: data })
 		);
 	}
 

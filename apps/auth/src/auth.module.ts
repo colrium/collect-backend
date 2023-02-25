@@ -1,18 +1,15 @@
-import { Module, Logger } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import {
 	AuthModule as AuthLibModule,
 	AuthService,
-	RmqModule,
 	DatabaseModule,
 	DynamicConfigModule,
-	DynamicConfigService,
-	LocalStrategy,
-	JwtStrategy
+	DynamicConfigService
 } from '@app/common';
+import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
+import { RmqModule } from '../../broker/src/mqtt';
 import { AuthController } from './auth.controller';
 
 @Module({

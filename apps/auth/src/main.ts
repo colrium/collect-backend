@@ -1,4 +1,4 @@
-import { DynamicConfigService, RmqService } from '@app/common';
+import { DynamicConfigService } from '@app/common';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { RmqOptions, Transport } from '@nestjs/microservices';
@@ -9,6 +9,7 @@ import {
 } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import { RmqService } from '../../broker/src/mqtt';
 import { AuthModule } from './auth.module';
 
 async function bootstrap() {

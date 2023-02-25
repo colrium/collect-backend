@@ -12,7 +12,7 @@ export interface MongoSchemaOptions {
 }
 const defaultOptions: MongoSchemaOptions = {
 	// _id: false,
-	timestamps: false,
+	timestamps: true,
 	removePrivatePaths: true,
 	toJSON: {
 		virtuals: true,

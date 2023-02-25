@@ -62,6 +62,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/users/tsconfig.app.json"
       }
+    },
+    "broker": {
+      "type": "application",
+      "root": "apps/broker",
+      "entryFile": "main",
+      "sourceRoot": "apps/broker/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/broker/tsconfig.app.json"
+      }
     }
   }
 }

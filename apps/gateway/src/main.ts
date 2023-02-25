@@ -1,7 +1,7 @@
-import { DynamicConfigService, RmqService } from '@app/common';
+import { DynamicConfigService } from '@app/common';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { RmqOptions, Transport } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
 import {
 	DocumentBuilder,
 	SwaggerCustomOptions,
@@ -18,7 +18,6 @@ async function bootstrap() {
 		logger: ['error', 'warn', 'debug', 'verbose']
 	});
 	const configService = app.get(DynamicConfigService);
-	const rmqService = app.get<RmqService>(RmqService);
 	const adapter = new WebsocketAdapter(app);
 	app.useWebSocketAdapter(adapter);
 
@@ -37,15 +36,6 @@ async function bootstrap() {
 	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 	app.use(cookieParser());
-
-	app.connectMicroservice<RmqOptions>(rmqService.getOptions('GATEWAY', true));
-	app.connectMicroservice({
-		transport: Transport.TCP,
-		options: {
-			host: APP_HOST,
-			port: APP_PORT
-		}
-	});
 	const swaggerConfigBuilder = new DocumentBuilder()
 		.setTitle(APP_NAME)
 		.setDescription(APP_DESCRIPTION)
@@ -62,8 +52,15 @@ async function bootstrap() {
 	};
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup('/docs', app, document, customOptions);
+	// app.connectMicroservice<RmqOptions>(rmqService.getOptions('AUTH', true));
+	app.connectMicroservice({
+		transport: Transport.MQTT,
+		options: {
+			url: 'mqtt://localhost:1883'
+		}
+	});
 
-	await app.startAllMicroservices();
+	// await app.startAllMicroservices();
 	await app.listen(PORT);
 	logger.verbose(`${APP_NAME} listening on port: ${PORT}`);
 }

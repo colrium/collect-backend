@@ -67,6 +67,24 @@
 			"console": "integratedTerminal",
 			"restart": true,
 			"autoAttachChildProcesses": true
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Broker Application",
+			"runtimeExecutable": "yarn",
+			"runtimeArgs": [
+				"start",
+				"broker",
+				"--",
+				"--debug",
+				"9225",
+				"--watch",
+				"--inspect-brk"
+			],
+			"console": "integratedTerminal",
+			"restart": true,
+			"autoAttachChildProcesses": true
 		}
 		// {
 		// 	"type": "node",

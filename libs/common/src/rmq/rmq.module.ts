@@ -1,8 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import * as Joi from 'joi';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { RmqService } from './rmq.service';
+import * as Joi from 'joi';
 import { DynamicConfigModule, DynamicConfigService } from '../dynamic';
+import { RmqService } from './rmq.service';
 interface RmqModuleOptions {
 	name: string;
 }
@@ -21,7 +21,7 @@ interface RmqModuleOptions {
 	exports: [RmqService]
 })
 export class RmqModule {
-	static register({ name }: RmqModuleOptions): DynamicModule {
+	static register(options: RmqModuleOptions): DynamicModule {
 		return {
 			module: RmqModule,
 			imports: [
@@ -30,25 +30,17 @@ export class RmqModule {
 						imports: [
 							DynamicConfigModule.register({
 								isGlobal: true,
-								validationSchema: Joi.object({
-									RABBIT_MQ_URI: Joi.string().required(),
-									[`RABBIT_MQ_${name}_QUEUE`]:
-										Joi.string().required()
-								}),
 								folder: '.'
 							})
 						],
-						name,
 						useFactory: (configService: DynamicConfigService) => ({
 							transport: Transport.RMQ,
 							options: {
-								urls: [configService.get('RABBIT_MQ_URI')],
-								queue: configService.get(
-									`RABBIT_MQ_${name}_QUEUE`
-								)
+								urls: [configService.get('RABBIT_MQ_URI')]
 							}
 						}),
-						inject: [DynamicConfigService]
+						inject: [DynamicConfigService],
+						...options
 					}
 				])
 			],

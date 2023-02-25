@@ -1,6 +1,6 @@
+import { DynamicConfigService } from '@app/common//dynamic';
 import { Injectable } from '@nestjs/common';
 import { RmqContext, RmqOptions, Transport } from '@nestjs/microservices';
-import { DynamicConfigService } from '../dynamic';
 
 @Injectable()
 export class RmqService {
