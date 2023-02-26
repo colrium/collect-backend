@@ -95,6 +95,10 @@ export abstract class MongoBaseRepository<TDocument extends MongoBaseDocument> {
 		return await this._model.find(filterQuery);
 	}
 
+	async count(filterQuery: FilterQuery<TDocument>): Promise<number> {
+		return await this._model.count(filterQuery);
+	}
+
 	async startTransaction() {
 		const session = await this.connection.startSession();
 		session.startTransaction();

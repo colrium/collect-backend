@@ -1,16 +1,8 @@
-import { applyDecorators, Type, Query } from '@nestjs/common';
-import {
-	ApiExtraModels,
-	ApiProperty,
-	ApiOkResponse,
-	getSchemaPath,
-	ApiQuery,
-	ApiQueryOptions
-} from '@nestjs/swagger';
-import { PageDto } from '../dto/page.dto';
+import { applyDecorators, Type } from '@nestjs/common';
+import { ApiQuery } from '@nestjs/swagger';
 
 export const PaginatedRequest = <TModel extends Type<any>>(model: TModel) => {
-	return applyDecorators(
+	const decorators = [
 		ApiQuery({
 			name: 'pagination',
 			description: `Number of ${model.name} records per page`,
@@ -25,5 +17,7 @@ export const PaginatedRequest = <TModel extends Type<any>>(model: TModel) => {
 			// default: 1,
 			required: false
 		})
-	);
+	];
+	console.log('PaginatedRequest model', model);
+	return applyDecorators(...decorators);
 };

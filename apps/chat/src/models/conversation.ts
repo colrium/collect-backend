@@ -1,4 +1,4 @@
-import { IsValidUUID } from '@app/common';
+// import { IsValidUUID } from '@app/common';
 import { MongoBaseDocument, MongoSchema } from '@app/common/dynamic/mongo';
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -40,9 +40,16 @@ export class Conversation extends MongoBaseDocument {
 		description: 'Owner user id'
 	})
 	@IsString()
-	@IsValidUUID()
 	@Prop({ type: String, required: true })
 	ownerId: string;
+
+	@ApiProperty({
+		example: [uuidv4(), uuidv4()],
+		description: 'Participants user ids'
+	})
+	// @IsString()
+	@Prop([{ type: String, required: true }])
+	participantIds: string[];
 
 	@ApiPropertyOptional({
 		example: 'Team A Chat',

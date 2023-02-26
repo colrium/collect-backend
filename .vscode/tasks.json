@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"command": "yarn start:debug auth ",
+			"command": "yarn start:debug auth --debug 9247",
 			"label": "Auth app",
 			"isBackground": true,
 			"problemMatcher": [
@@ -17,7 +17,6 @@
 						}
 					],
 					"background": {
-						"activeOnStart": true,
 						"beginsPattern": ".",
 						"endsPattern": "."
 					}
@@ -33,7 +32,7 @@
 		},
 		{
 			"type": "shell",
-			"command": "yarn start:debug users",
+			"command": "yarn start:debug users --debug 9248",
 			"label": "Users app",
 			"isBackground": true,
 			"problemMatcher": [
@@ -47,7 +46,6 @@
 						}
 					],
 					"background": {
-						"activeOnStart": true,
 						"beginsPattern": ".",
 						"endsPattern": "."
 					}
@@ -63,7 +61,7 @@
 		},
 		{
 			"type": "shell",
-			"command": "yarn start:debug gateway",
+			"command": "yarn start:debug gateway --debug 9249",
 			"label": "Gateway app",
 			"isBackground": true,
 			"problemMatcher": [
@@ -77,7 +75,35 @@
 						}
 					],
 					"background": {
-						"activeOnStart": true,
+						"beginsPattern": ".",
+						"endsPattern": "."
+					}
+				}
+			],
+			"presentation": {
+				"reveal": "silent",
+				"close": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"type": "shell",
+			"command": "yarn start:debug broker --debug 9250",
+			"label": "Broker app",
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"pattern": [
+						{
+							"regexp": ".",
+							"file": 1,
+							"location": 2,
+							"message": 3
+						}
+					],
+					"background": {
 						"beginsPattern": ".",
 						"endsPattern": "."
 					}

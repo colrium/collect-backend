@@ -7,7 +7,6 @@ import {
 	SwaggerCustomOptions,
 	SwaggerModule
 } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { WebsocketAdapter } from './gateway.adapter';
 import { GatewayModule } from './gateway.module';
@@ -21,9 +20,6 @@ async function bootstrap() {
 	const adapter = new WebsocketAdapter(app);
 	app.useWebSocketAdapter(adapter);
 
-	const APP_HOST = configService.get('USERS_GATEWAY_HOST');
-	const APP_PORT = configService.get('USERS_GATEWAY_PORT', 8086);
-
 	const APP_FAVICON = configService.get('FAVICON');
 	const APP_NAME = configService.get('GATEWAY_APP_NAME', 'CBE Gateway');
 	const APP_DESCRIPTION = configService.get(
@@ -35,7 +31,6 @@ async function bootstrap() {
 	app.use(helmet());
 	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
-	app.use(cookieParser());
 	const swaggerConfigBuilder = new DocumentBuilder()
 		.setTitle(APP_NAME)
 		.setDescription(APP_DESCRIPTION)

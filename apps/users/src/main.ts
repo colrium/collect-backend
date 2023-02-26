@@ -7,7 +7,6 @@ import {
 	SwaggerCustomOptions,
 	SwaggerModule
 } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { UsersModule } from './users.module';
 
@@ -36,9 +35,7 @@ async function bootstrap() {
 	const APP_VERSION = configService.get('VERSION', '0.0.1');
 	const PORT = configService.get('USERS_APP_PORT', 8083);
 	app.use(helmet());
-	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
-	app.use(cookieParser());
 
 	app.connectMicroservice<RmqOptions>(rmqService.getOptions('AUTH', true));
 	app.connectMicroservice({

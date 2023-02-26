@@ -1,4 +1,4 @@
-import { IsValidUUID } from '@app/common';
+// import { IsValidUUID } from '@app/common';
 import { MongoBaseDocument, MongoSchema } from '@app/common/dynamic/mongo';
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -51,7 +51,6 @@ export class Message extends MongoBaseDocument {
 		description: 'Sender user id'
 	})
 	@IsString()
-	@IsValidUUID()
 	@Prop({ type: String, required: true })
 	senderId: string;
 
@@ -60,7 +59,6 @@ export class Message extends MongoBaseDocument {
 		description: 'Conversation id'
 	})
 	@IsString()
-	@IsValidUUID()
 	@Prop({ type: String, required: true })
 	conversationId: string;
 
@@ -87,7 +85,6 @@ export class Message extends MongoBaseDocument {
 		description: 'Parent Message id'
 	})
 	@IsString()
-	@IsValidUUID()
 	@IsOptional()
 	@Prop({ type: String, default: null })
 	parentMessageId: string;

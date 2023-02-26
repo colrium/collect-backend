@@ -31,11 +31,10 @@ import { UsersService } from './users.service';
 export class UsersController {
 	logger = new Logger(UsersController.name);
 	constructor(private readonly usersService: UsersService) {
-		this.logger.verbose('UserSchema', UserSchema);
+		// this.logger.verbose('UserSchema', UserSchema);
 	}
 	@ApiOperation({ summary: 'Get users' })
-	// @PaginatedResponse(User)
-	@ApiMongoFilterQuery(User)
+	@ApiMongoFilterQuery(UserSchema)
 	@Get()
 	async find(@Req() req) {
 		return await this.usersService.find({});

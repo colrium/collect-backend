@@ -7,7 +7,6 @@ import {
 	SwaggerCustomOptions,
 	SwaggerModule
 } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { RmqService } from '../../broker/src/mqtt';
 import { AuthModule } from './auth.module';
@@ -38,11 +37,10 @@ async function bootstrap() {
 	const APP_SERTVICE_PORT = configService.get('SERVICE_AUTH_PORT');
 
 	const PORT = configService.get('APP_AUTH_PORT', 8081);
-
-	app.use(helmet());
+	// app.use(cookieParser());
 	// app.use(csurf())
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
-	app.use(cookieParser());
+	app.use(helmet());
 
 	app.connectMicroservice<RmqOptions>(rmqService.getOptions('AUTH', true));
 	app.connectMicroservice({

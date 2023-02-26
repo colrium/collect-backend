@@ -3,13 +3,53 @@
 	// Hover to view descriptions of existing attributes.
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
-	"configurations": [
+	"configurations": [		
+		// {
+		// 	"type": "node",
+		// 	"request": "attach",
+		// 	"name": "Auth Attach",
+		// 	"port": 9247,
+		// 	"restart": true,
+		// 	"preLaunchTask": "Auth app"
+		// },
+		// {
+		// 	"type": "node",
+		// 	"request": "attach",
+		// 	"name": "Users Attach",
+		// 	"port": 9248,
+		// 	"restart": true,
+		// 	"preLaunchTask": "Users app"
+		// },
+		// {
+		// 	"type": "node",
+		// 	"request": "attach",
+		// 	"name": "Gateway Attach",
+		// 	"port": 9249,
+		// 	"restart": true,
+		// 	"preLaunchTask": "Gateway app"
+		// },
+		// {
+		// 	"type": "node",
+		// 	"request": "attach",
+		// 	"name": "Broker Attach",
+		// 	"port": 9250,
+		// 	"restart": true,
+		// 	"preLaunchTask": "Broker app"
+		// }
 		{
 			"type": "node",
 			"request": "launch",
 			"name": "Auth Application",
 			"runtimeExecutable": "yarn",
-			"runtimeArgs": ["start", "auth", "--", "--debug", "9221", "--watch", "--inspect-brk"],
+			"runtimeArgs": [
+				"start:debug",
+				"auth",
+				"--",
+				"--debug",
+				"9247",
+				"--watch",
+				"--inspect-brk"
+			],
 			"console": "integratedTerminal",
 			"restart": true,
 			"autoAttachChildProcesses": true
@@ -20,7 +60,7 @@
 			"name": "Chat Application",
 			"runtimeExecutable": "yarn",
 			"runtimeArgs": [
-				"start",
+				"start:debug",
 				"chat",
 				"--",
 				"--debug",
@@ -38,7 +78,7 @@
 			"name": "Gateway Application",
 			"runtimeExecutable": "yarn",
 			"runtimeArgs": [
-				"start",
+				"start:debug",
 				"gateway",
 				"--",
 				"--debug",
@@ -56,7 +96,7 @@
 			"name": "Users Application",
 			"runtimeExecutable": "yarn",
 			"runtimeArgs": [
-				"start",
+				"start:debug",
 				"users",
 				"--",
 				"--debug",
@@ -74,7 +114,7 @@
 			"name": "Broker Application",
 			"runtimeExecutable": "yarn",
 			"runtimeArgs": [
-				"start",
+				"start:debug",
 				"broker",
 				"--",
 				"--debug",
@@ -86,32 +126,18 @@
 			"restart": true,
 			"autoAttachChildProcesses": true
 		}
-		// {
-		// 	"type": "node",
-		// 	"request": "attach",
-		// 	"name": "Auth Attach",
-		// 	"port": 9227,
-		// 	"restart": true,
-		// 	"preLaunchTask": "Auth app",
-		// 	"postDebugTask": "Terminate all"
-		// },
-		// {
-		// 	"type": "node",
-		// 	"request": "attach",
-		// 	"name": "Users Attach",
-		// 	"port": 9228,
-		// 	"restart": true,
-		// 	"preLaunchTask": "Users app",
-		// 	"postDebugTask": "Terminate all"
-		// },
-		// {
-		// 	"type": "node",
-		// 	"request": "attach",
-		// 	"name": "Gateway Attach",
-		// 	"port": 9229,
-		// 	"restart": true,
-		// 	"preLaunchTask": "Gateway app",
-		// 	"postDebugTask": "Terminate all"
-		// }
+	],
+	"compounds": [
+		{
+			"name": "Multi-Target debugging",
+			"configurations": [
+				"Broker Application",
+				"Auth Application",
+				"Users Application",
+				"Gateway Application",
+				"Chat Application"
+			],
+			"postDebugTask": "Terminate all"
+		}
 	]
 }

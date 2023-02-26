@@ -11,7 +11,7 @@ export interface MongoSchemaOptions {
 	removePrivatePaths?: boolean;
 }
 const defaultOptions: MongoSchemaOptions = {
-	// _id: false,
+	_id: true,
 	timestamps: true,
 	removePrivatePaths: true,
 	toJSON: {

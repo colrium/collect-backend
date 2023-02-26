@@ -1,6 +1,7 @@
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { model } from 'mongoose';
 import { MongoBaseDocument, MongoSchema } from '../../dynamic/mongo';
 import { Role } from '../types';
 
@@ -80,4 +81,6 @@ ModelSchema.virtual('fullName').get(function (this: UserDocument) {
 	return `${this.firstName} ${this.lastName}`;
 });
 
-export { ModelSchema as UserSchema };
+const Model = model<User>('User', ModelSchema);
+
+export { ModelSchema as UserSchema, Model as UserModel };
